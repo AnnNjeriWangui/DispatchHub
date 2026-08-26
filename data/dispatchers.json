@@ -1,0 +1,52 @@
+[
+  {
+    "id": "DISP-001",
+    "name": "Jackson Kiprotich",
+    "phone": "+254 701 112 233",
+    "vehicle_type": "Boda Boda Motorcycle (Box-Equipped)",
+    "vehicle_reg": "KMD 492T",
+    "status": "Available",
+    "rating": 4.9,
+    "assigned_zone": "Westlands / Parklands"
+  },
+  {
+    "id": "DISP-002",
+    "name": "Samuel Odhiambo",
+    "phone": "+254 702 334 455",
+    "vehicle_type": "Refrigerated Delivery Van",
+    "vehicle_reg": "KDG 810Z",
+    "status": "Available",
+    "rating": 4.8,
+    "assigned_zone": "Lavington / Kileleshwa"
+  },
+  {
+    "id": "DISP-003",
+    "name": "Peter Kamau",
+    "phone": "+254 703 556 677",
+    "vehicle_type": "Cargo TukTuk Express",
+    "vehicle_reg": "KTK 123X",
+    "status": "Available",
+    "rating": 4.95,
+    "assigned_zone": "Nairobi CBD / Upper Hill"
+  },
+  {
+    "id": "DISP-004",
+    "name": "Grace Nduta",
+    "phone": "+254 704 778 899",
+    "vehicle_type": "Electric Eco-Bike (Insulated Bag)",
+    "vehicle_reg": "KEB 904A",
+    "status": "Available",
+    "rating": 4.85,
+    "assigned_zone": "Karen / Langata"
+  },
+  {
+    "id": "DISP-005",
+    "name": "Boniface Maina",
+    "phone": "+254 705 990 011",
+    "vehicle_type": "Courier Van (High-Security)",
+    "vehicle_reg": "KCJ 554B",
+    "status": "Available",
+    "rating": 4.9,
+    "assigned_zone": "Thika Road / Kiambu / Ruaka"
+  }
+]

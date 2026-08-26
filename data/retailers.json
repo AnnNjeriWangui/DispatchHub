@@ -1,0 +1,87 @@
+[
+  {
+    "id": "RET-001",
+    "name": "Savanna Blooms & Florist",
+    "owner": "Evelyn Mutua",
+    "phone": "+254 712 345 678",
+    "location": "Westlands, Nairobi",
+    "category": "Fresh Florals & Gifts",
+    "default_instructions": "Keep upright and away from direct sunlight; fragile glass vases.",
+    "avatar": "🌸",
+    "color": "#e11d48",
+    "catalog": [
+      "Luxury white rose bouquet with glass vase",
+      "Tropical sunflower & orchid arrangement",
+      "Anniversary red roses with Belgian chocolates",
+      "Pastel hydrangeas gift box"
+    ]
+  },
+  {
+    "id": "RET-002",
+    "name": "Rift Valley Artisan Crafts",
+    "owner": "Kiprono Koech",
+    "phone": "+254 722 987 654",
+    "location": "Karen, Nairobi",
+    "category": "Handicrafts & Leatherwear",
+    "default_instructions": "Handcrafted items; handle with care.",
+    "avatar": "🏺",
+    "color": "#d97706",
+    "catalog": [
+      "Handcrafted Maasai beaded sandals (Size 40)",
+      "Carved olive wood salad bowl set",
+      "Authentic Kenyan leather weekend duffel bag",
+      "Beaded brass warrior choker necklace"
+    ]
+  },
+  {
+    "id": "RET-003",
+    "name": "Nairobi Tech & Gadgets Hub",
+    "owner": "Brian Omondi",
+    "phone": "+254 733 456 789",
+    "location": "Moi Avenue, Nairobi CBD",
+    "category": "Consumer Electronics",
+    "default_instructions": "High-value electronics; require recipient signature upon delivery.",
+    "avatar": "⚡",
+    "color": "#2563eb",
+    "catalog": [
+      "Wireless active noise-cancelling earbuds",
+      "20,000mAh 65W fast-charging power bank",
+      "Mechanical RGB backlit gaming keyboard",
+      "4K Ultra-HD streaming media dongle"
+    ]
+  },
+  {
+    "id": "RET-004",
+    "name": "Organic Fresh Basket",
+    "owner": "Amina Wanjiru",
+    "phone": "+254 745 112 233",
+    "location": "Lavington, Nairobi",
+    "category": "Farm-Fresh Produce & Oils",
+    "default_instructions": "Perishable goods; deliver immediately or store in temperature-controlled box.",
+    "avatar": "🥑",
+    "color": "#16a34a",
+    "catalog": [
+      "Organic Hass avocados (Box of 12) & cold-pressed macadamia oil (500ml)",
+      "Fresh Highland strawberries & raw honeycomb jar",
+      "Hydroponic salad greens bundle with heirloom tomatoes",
+      "Freshly harvested passion fruits (5kg basket)"
+    ]
+  },
+  {
+    "id": "RET-005",
+    "name": "Urban Books & Stationery",
+    "owner": "David Njoroge",
+    "phone": "+254 754 889 001",
+    "location": "Ruaka, Kiambu",
+    "category": "Books & Office Stationery",
+    "default_instructions": "Keep dry; pack securely to prevent bent book covers.",
+    "avatar": "📚",
+    "color": "#7c3aed",
+    "catalog": [
+      "Business leather executive notebook & fountain pen set",
+      "Bestselling African contemporary fiction bundle (3 books)",
+      "Architectural sketching pad & fineliner markers",
+      "Annual 2026 planner with magnetic bookmark"
+    ]
+  }
+]

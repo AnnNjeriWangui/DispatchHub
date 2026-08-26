@@ -1,0 +1,56 @@
+[
+  {
+    "id": "CUST-001",
+    "name": "Wanjiku Kimani",
+    "phone": "+254 711 234 567",
+    "email": "wanjiku.kimani@example.co.ke",
+    "delivery_address": "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Kilimani"
+  },
+  {
+    "id": "CUST-002",
+    "name": "Juma Mwangi",
+    "phone": "+254 723 456 789",
+    "email": "juma.mwangi@example.co.ke",
+    "delivery_address": "Suite 302, Diamond Plaza Annex, 4th Parklands Avenue, Parklands, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Parklands"
+  },
+  {
+    "id": "CUST-003",
+    "name": "Faith Chebet",
+    "phone": "+254 734 567 890",
+    "email": "faith.chebet@example.co.ke",
+    "delivery_address": "Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Kileleshwa"
+  },
+  {
+    "id": "CUST-004",
+    "name": "Kevin Otieno",
+    "phone": "+254 745 678 901",
+    "email": "kevin.otieno@example.co.ke",
+    "delivery_address": "7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Upper Hill"
+  },
+  {
+    "id": "CUST-005",
+    "name": "Mercy Achieng",
+    "phone": "+254 756 789 012",
+    "email": "mercy.achieng@example.co.ke",
+    "delivery_address": "House No. 45, Golden Gate Estate, South B, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "South B"
+  },
+  {
+    "id": "CUST-006",
+    "name": "Dennis Mutiso",
+    "phone": "+254 767 890 123",
+    "email": "dennis.mutiso@example.co.ke",
+    "delivery_address": "Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Garden City / Roysambu"
+  }
+]
