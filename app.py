@@ -317,5 +317,5 @@ def advance_order_status(order_number):
     })
 
 if __name__ == '__main__':
-    print("🚀 DispatchHub Retailer Portal Server running on http://127.0.0.1:5000")
+    print("DispatchHub Retailer Portal Server running on http://127.0.0.1:5000")
     app.run(host='0.0.0.0', port=5000, debug=True)
