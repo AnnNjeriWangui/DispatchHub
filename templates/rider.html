@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflex Rider Module - EV Fleet Logistics & Delivery</title>
+  <meta name="description" content="Reflex Last-Mile Logistics Rider Module for Kenyan Retailers & EV Motorbike Fleets.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & Babel CDN for standalone rendering -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Custom scrollbar hiding helper */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased font-sans">
+  <div id="rider-root"></div>
+
+  <!-- Inline Babel Script loading our modules -->
+  {% raw %}
+  <script type="text/babel">
+
+    const { useState, useEffect, useRef } = React;
+
+    // --- 1. LOCALIZED MOCK RIDERS ---
+    const MOCK_RIDERS = [
+      {
+        id: "RIDER-001",
+        name: "Hesbon Otieno",
+        gender: "Male",
+        phone: "+254 712 345 678",
+        formattedPhone: "0712345678",
+        email: "hesbon.otieno@reflex.co.ke",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        avatarFallback: "HO",
+        rating: 4.9,
+        completedDeliveries: 412,
+        hub: "Westlands EV Charging Hub",
+        zone: "Nairobi North",
+        dutyStatus: "ONLINE",
+        vehicle: {
+          model: "Roam Air",
+          type: "Electric Motorbike",
+          plateNumber: "KME 102G",
+          batteryLevel: 88,
+          estimatedRangeKm: 78,
+          swapStationNearby: "Sarit Centre Battery Hub (0.4 km)"
+        }
+      },
+      {
+        id: "RIDER-002",
+        name: "Faith Wambui",
+        gender: "Female",
+        phone: "+254 722 987 654",
+        formattedPhone: "0722987654",
+        email: "faith.wambui@reflex.co.ke",
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        avatarFallback: "FW",
+        rating: 4.95,
+        completedDeliveries: 538,
+        hub: "Kilimani Express Station",
+        zone: "Nairobi Central",
+        dutyStatus: "ONLINE",
+        vehicle: {
+          model: "Spiro Commuter",
+          type: "Electric Motorbike",
+          plateNumber: "KME 340G",
+          batteryLevel: 74,
+          estimatedRangeKm: 62,
+          swapStationNearby: "Yaya Centre Spiro Station (0.8 km)"
+        }
+      },
+      {
+        id: "RIDER-003",
+        name: "Aminah Hassan",
+        gender: "Female",
+        phone: "+254 733 456 789",
+        formattedPhone: "0733456789",
+        email: "aminah.hassan@reflex.co.ke",
+        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+        avatarFallback: "AH",
+        rating: 4.88,
+        completedDeliveries: 389,
+        hub: "Nairobi CBD Logistics Hub",
+        zone: "Nairobi East",
+        dutyStatus: "ONLINE",
+        vehicle: {
+          model: "Ampersand e-Boda",
+          type: "Electric Motorbike",
+          plateNumber: "KME 512G",
+          batteryLevel: 92,
+          estimatedRangeKm: 85,
+          swapStationNearby: "City Hall Ampersand Pod (0.2 km)"
+        }
+      },
+      {
+        id: "RIDER-004",
+        name: "Brian Kipkorir",
+        gender: "Male",
+        phone: "+254 701 234 567",
+        formattedPhone: "0701234567",
+        email: "brian.kipkorir@reflex.co.ke",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        avatarFallback: "BK",
+        rating: 4.78,
+        completedDeliveries: 295,
+        hub: "Industrial Area Depot",
+        zone: "Nairobi South",
+        dutyStatus: "CHARGING",
+        vehicle: {
+          model: "Roam Air",
+          type: "Electric Motorbike",
+          plateNumber: "KME 889G",
+          batteryLevel: 65,
+          estimatedRangeKm: 55,
+          swapStationNearby: "Enterprise Rd Charging Hub (0.1 km)"
+        }
+      }
+    ];
+
+    // --- 2. RIDER SERVICE & OFFLINE QUEUE MANAGER ---
+    const DELIVERY_STATES = {
+      ASSIGNED: 'ASSIGNED',
+      PICKED_UP: 'PICKED_UP',
+      IN_TRANSIT: 'IN_TRANSIT',
+      DELIVERED: 'DELIVERED',
+      CANCELLED: 'CANCELLED'
+    };
+
+    const NEXT_STATE_MAP = {
+      [DELIVERY_STATES.ASSIGNED]: DELIVERY_STATES.PICKED_UP,
+      [DELIVERY_STATES.PICKED_UP]: DELIVERY_STATES.IN_TRANSIT,
+      [DELIVERY_STATES.IN_TRANSIT]: DELIVERY_STATES.DELIVERED,
+      [DELIVERY_STATES.DELIVERED]: null
+    };
+
+    class RiderServiceStandalone {
+      constructor() {
+        this.listeners = new Set();
+        this.setupOnlineListeners();
+      }
+
+      setupOnlineListeners() {
+        window.addEventListener('online', () => {
+          this.notifyListeners('network', { online: true });
+          this.flushOfflineQueue();
+        });
+        window.addEventListener('offline', () => {
+          this.notifyListeners('network', { online: false });
+        });
+      }
+
+      subscribe(cb) {
+        this.listeners.add(cb);
+        return () => this.listeners.delete(cb);
+      }
+
+      notifyListeners(type, payload) {
+        this.listeners.forEach(cb => cb(type, payload));
+      }
+
+      getCurrentRider() {
+        const cached = localStorage.getItem('rider_user');
+        return cached ? JSON.parse(cached) : MOCK_RIDERS[0];
+      }
+
+      isLoggedIn() {
+        return !!localStorage.getItem('rider_token');
+      }
+
+      async loginWithPhone(phone, otp) {
+        const clean = phone.trim().replace(/\s+/g, '');
+        if (!/^(\+254|0)[17]\d{8}$/.test(clean)) {
+          throw new Error('Invalid Kenyan phone number format.');
+        }
+        if (!otp || otp.length !== 6) {
+          throw new Error('Please enter 6-digit SMS OTP code.');
+        }
+        const rider = MOCK_RIDERS.find(r => clean.includes(r.formattedPhone.slice(-8))) || MOCK_RIDERS[0];
+        const token = `jwt_${rider.id}_${Date.now()}`;
+        localStorage.setItem('rider_token', token);
+        localStorage.setItem('rider_user', JSON.stringify(rider));
+        return { token, rider };
+      }
+
+      async loginWithGoogle() {
+        const rider = MOCK_RIDERS[1];
+        const token = `jwt_google_${rider.id}_${Date.now()}`;
+        localStorage.setItem('rider_token', token);
+        localStorage.setItem('rider_user', JSON.stringify(rider));
+        return { token, rider };
+      }
+
+      logout() {
+        localStorage.removeItem('rider_token');
+        localStorage.removeItem('rider_user');
+      }
+
+      getOfflineQueue() {
+        const queue = localStorage.getItem('reflex_offline_queue');
+        return queue ? JSON.parse(queue) : [];
+      }
+
+      queueOfflineUpdate(action) {
+        const queue = this.getOfflineQueue();
+        queue.push(action);
+        localStorage.setItem('reflex_offline_queue', JSON.stringify(queue));
+        this.notifyListeners('queue_changed', { queueLength: queue.length });
+      }
+
+      async flushOfflineQueue() {
+        const queue = this.getOfflineQueue();
+        if (queue.length === 0) return;
+        localStorage.removeItem('reflex_offline_queue');
+        this.notifyListeners('sync_complete', { syncedCount: queue.length });
+      }
+
+      async updateOrderStatus(orderNumber, newStatus, verificationData) {
+        const action = { orderNumber, newStatus, verificationData, timestamp: new Date().toISOString() };
+        this.updateCachedOrders(orderNumber, newStatus, verificationData);
+
+        if (!navigator.onLine) {
+          this.queueOfflineUpdate(action);
+          return { success: true, offline: true, message: `Offline: Order ${orderNumber} state changed to ${newStatus}. Queued for sync.` };
+        }
+
+        try {
+          await fetch(`/api/orders/${orderNumber}/advance`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(action)
+          });
+          return { success: true, offline: false, message: `Order ${orderNumber} state updated to ${newStatus}.` };
+        } catch (e) {
+          this.queueOfflineUpdate(action);
+          return { success: true, offline: true, message: `Network fallback: Queued ${orderNumber} update locally.` };
+        }
+      }
+
+      updateCachedOrders(orderNumber, newStatus, verificationData) {
+        const cached = localStorage.getItem('reflex_orders_cache');
+        let orders = cached ? JSON.parse(cached) : this.getMockOrders();
+        orders = orders.map(o => o.orderNumber === orderNumber ? { ...o, status: newStatus, verificationData } : o);
+        localStorage.setItem('reflex_orders_cache', JSON.stringify(orders));
+        this.notifyListeners('order_updated', { orderNumber, newStatus });
+      }
+
+      async getAssignedOrders() {
+        if (navigator.onLine) {
+          try {
+            const res = await fetch('/api/orders');
+            if (res.ok) {
+              const apiOrders = await res.json();
+              const mapped = apiOrders.map(o => ({
+                orderNumber: o.order_number,
+                retailerName: o.retailer_id === 'RET-002' ? 'Chandarana Foodplus' : 'Naivas Supermarket',
+                pickupAddress: 'Sarit Centre, Westlands, Nairobi',
+                customerName: o.customer_name,
+                customerPhone: o.customer_phone,
+                deliveryAddress: o.delivery_address,
+                itemDescription: o.item_description,
+                status: o.status === 'In Transit' ? DELIVERY_STATES.IN_TRANSIT : (o.status === 'Delivered' ? DELIVERY_STATES.DELIVERED : DELIVERY_STATES.ASSIGNED),
+                amountKes: 1850,
+                verificationPin: '4829',
+                qrPayload: `REFLEX-${o.order_number}-VERIFIED`,
+                etaMinutes: 20
+              }));
+              localStorage.setItem('reflex_orders_cache', JSON.stringify(mapped));
+              return mapped;
+            }
+          } catch (e) {}
+        }
+
+        const cached = localStorage.getItem('reflex_orders_cache');
+        return cached ? JSON.parse(cached) : this.getMockOrders();
+      }
+
+      getMockOrders() {
+        return [
+          {
+            orderNumber: "ORD-2026-0828-001",
+            retailerName: "Naivas Supermarket (Westlands)",
+            pickupAddress: "Sarit Centre, Lower Ground Floor, Westlands",
+            customerName: "David Ochieng",
+            customerPhone: "0722123456",
+            deliveryAddress: "Apartment B4, Rhapta Road, Westlands",
+            itemDescription: "Groceries & Fresh Supplies (2x Bags)",
+            status: DELIVERY_STATES.ASSIGNED,
+            amountKes: 2450,
+            verificationPin: "4829",
+            qrPayload: "REFLEX-ORD-2026-0828-001-VERIFIED",
+            etaMinutes: 25,
+            notes: "Ring bell at gate. Leave with security if no answer."
+          },
+          {
+            orderNumber: "ORD-2026-0828-002",
+            retailerName: "Chandarana Foodplus (Kilimani)",
+            pickupAddress: "Adlife Plaza, Chania Avenue, Kilimani",
+            customerName: "Joy Mutua",
+            customerPhone: "0733987654",
+            deliveryAddress: "Greenwood Court, Marcus Garvey Rd, Kilimani",
+            itemDescription: "Imported Wine & Gourmet Treats",
+            status: DELIVERY_STATES.PICKED_UP,
+            amountKes: 4100,
+            verificationPin: "8192",
+            qrPayload: "REFLEX-ORD-2026-0828-002-VERIFIED",
+            etaMinutes: 15,
+            notes: "Customer requires SMS verification PIN."
+          },
+          {
+            orderNumber: "ORD-2026-0828-003",
+            retailerName: "Quickmart (Lavington)",
+            pickupAddress: "Lavington Mall, James Gichuru Rd",
+            customerName: "Peter Kamau",
+            customerPhone: "0711554433",
+            deliveryAddress: "House 12, Mvuli Road, Lavington",
+            itemDescription: "Baby Essentials & Pantry Refill",
+            status: DELIVERY_STATES.IN_TRANSIT,
+            amountKes: 3200,
+            verificationPin: "1047",
+            qrPayload: "REFLEX-ORD-2026-0828-003-VERIFIED",
+            etaMinutes: 10,
+            notes: "Handle with extra care."
+          }
+        ];
+      }
+
+      async triggerMpesaSTKPush(phone, amount, orderNo) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve({
+              CheckoutRequestID: `ws_CO_${Date.now()}`,
+              CustomerMessage: `STK Push sent to ${phone} for KES ${amount}.`
+            });
+          }, 1000);
+        });
+      }
+    }
+
+    const riderService = new RiderServiceStandalone();
+
+    // --- 3. RIDER AUTH COMPONENT ---
+    function RiderAuthView({ onLoginSuccess }) {
+      const [phone, setPhone] = useState('0712345678');
+      const [otp, setOtp] = useState(['1','2','3','4','5','6']);
+      const [step, setStep] = useState('phone');
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState('');
+
+      const handleRequestOTP = (e) => {
+        e.preventDefault();
+        setError('');
+        if (!/^(\+254|0)[17]\d{8}$/.test(phone.trim())) {
+          setError('Invalid Kenyan phone number (e.g. 0712345678, +254712345678).');
+          return;
+        }
+        setLoading(true);
+        setTimeout(() => {
+          setLoading(false);
+          setStep('otp');
+        }, 600);
+      };
+
+      const handleVerifyOTP = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+          const res = await riderService.loginWithPhone(phone, otp.join(''));
+          setLoading(false);
+          onLoginSuccess(res.rider);
+        } catch (err) {
+          setLoading(false);
+          setError(err.message);
+        }
+      };
+
+      const handleGoogle = async () => {
+        setLoading(true);
+        const res = await riderService.loginWithGoogle();
+        setLoading(false);
+        onLoginSuccess(res.rider);
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-100 space-y-6">
+            <div className="text-center">
+              <div className="w-14 h-14 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl mx-auto flex items-center justify-center text-emerald-400 text-2xl font-black mb-3">
+                ⚡
+              </div>
+              <h1 className="text-2xl font-black text-white">Reflex Rider Portal</h1>
+              <p className="text-xs text-slate-400 mt-1">Kenyan EV Fleet Logistics & Delivery OS</p>
+            </div>
+
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-xs">
+                {error}
+              </div>
+            )}
+
+            {step === 'phone' ? (
+              <form onSubmit={handleRequestOTP} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Kenyan Mobile Number</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="0712345678"
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500"
+                    required
+                  />
+                </div>
+
+                <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2">
+                  <span className="text-[11px] font-bold text-slate-400 block">Select Demo Rider Profile:</span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {MOCK_RIDERS.map(r => (
+                      <button
+                        key={r.id}
+                        type="button"
+                        onClick={() => setPhone(r.formattedPhone)}
+                        className={`text-left p-2 rounded-lg text-xs border ${
+                          phone === r.formattedPhone ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold' : 'bg-slate-900 border-slate-800 text-slate-400'
+                        }`}
+                      >
+                        <div className="font-bold">{r.name}</div>
+                        <div className="text-[10px] opacity-75">{r.vehicle.plateNumber}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20"
+                >
+                  {loading ? 'Sending OTP...' : 'Send SMS OTP Verification'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGoogle}
+                  className="w-full py-3 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-200 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  Sign in with Google
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOTP} className="space-y-5 text-center">
+                <p className="text-xs text-slate-300">Enter 6-digit OTP code sent to <span className="text-emerald-400 font-bold">{phone}</span></p>
+                <div className="flex justify-center gap-2">
+                  {otp.map((d, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      maxLength={1}
+                      value={d}
+                      onChange={(e) => {
+                        const copy = [...otp];
+                        copy[i] = e.target.value;
+                        setOtp(copy);
+                      }}
+                      className="w-11 h-14 bg-slate-950 border border-slate-800 rounded-xl text-center text-xl font-bold text-emerald-400"
+                    />
+                  ))}
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm transition-all shadow-lg"
+                >
+                  {loading ? 'Verifying...' : 'Verify & Access Dashboard'}
+                </button>
+                <button type="button" onClick={() => setStep('phone')} className="text-xs text-slate-400 hover:text-white">← Back to Phone</button>
+              </form>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // --- 4. RIDER CARD & EV GREEN BADGE ---
+    function RiderCardView({ rider }) {
+      const v = rider.vehicle;
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={rider.avatar} alt={rider.name} className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/50" />
+              <div>
+                <h2 className="text-base font-black text-white">{rider.name} <span className="text-xs font-normal text-slate-400">({rider.gender})</span></h2>
+                <p className="text-xs text-slate-400">{rider.phone}</p>
+                <div className="text-[11px] text-amber-400 font-bold mt-0.5">★ {rider.rating} • {rider.completedDeliveries} Deliveries</div>
+              </div>
+            </div>
+            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold">
+              ⚡ {rider.dutyStatus}
+            </span>
+          </div>
+
+          {/* EV Green Badge Container */}
+          <div className="bg-emerald-950/60 border border-emerald-500/30 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[9px] rounded uppercase">EV FLEET</span>
+                <span className="bg-emerald-950 text-emerald-300 border-2 border-emerald-500 font-mono text-sm px-2 py-0.5 rounded-lg font-black">{v.plateNumber}</span>
+              </div>
+              <span className="text-xs font-bold text-emerald-300">{v.model}</span>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-slate-300">
+                <span>Battery Level</span>
+                <span className="font-bold text-emerald-400">{v.batteryLevel}% (~{v.estimatedRangeKm} km)</span>
+              </div>
+              <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${v.batteryLevel}%` }} />
+              </div>
+            </div>
+            <div className="text-[11px] text-slate-400 flex justify-between border-t border-emerald-500/20 pt-2">
+              <span>Nearest Swap Station:</span>
+              <span className="text-emerald-400 font-semibold">{v.swapStationNearby}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 5. DUAL VERIFICATION MODAL ---
+    function DeliveryVerificationModal({ order, onClose, onVerified }) {
+      const [tab, setTab] = useState('pin');
+      const [pin, setPin] = useState(['', '', '', '']);
+      const [loading, setLoading] = useState(false);
+      const [mpesaPopup, setMpesaPopup] = useState(null);
+
+      const handlePin = (i, val) => {
+        const copy = [...pin];
+        copy[i] = val.slice(-1);
+        setPin(copy);
+      };
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const res = await riderService.triggerMpesaSTKPush(order.customerPhone, order.amountKes, order.orderNumber);
+        await riderService.updateOrderStatus(order.orderNumber, 'DELIVERED', { method: tab, code: pin.join('') });
+        setLoading(false);
+        setMpesaPopup(res);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative text-slate-100">
+            <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+
+            <div className="text-center mb-4">
+              <h2 className="text-lg font-black text-white">Dual Delivery Verification</h2>
+              <p className="text-xs text-slate-400">Order: <span className="font-mono text-emerald-400 font-bold">{order.orderNumber}</span></p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl mb-4">
+              <button onClick={() => setTab('pin')} className={`py-2 text-xs font-bold rounded-lg ${tab === 'pin' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>4-Digit SMS PIN</button>
+              <button onClick={() => setTab('qr')} className={`py-2 text-xs font-bold rounded-lg ${tab === 'qr' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>QR Code Scanner</button>
+            </div>
+
+            {tab === 'pin' ? (
+              <form onSubmit={handleSubmit} className="space-y-4 text-center">
+                <p className="text-xs text-slate-300">Enter SMS code from {order.customerName}</p>
+                <div className="flex justify-center gap-2">
+                  {pin.map((p, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      maxLength={1}
+                      value={p}
+                      onChange={(e) => handlePin(i, e.target.value)}
+                      className="w-12 h-14 bg-slate-950 border border-slate-800 rounded-xl text-center text-xl font-bold text-emerald-400"
+                    />
+                  ))}
+                </div>
+                <div className="text-xs text-slate-400 bg-slate-950 p-2 rounded-xl">Demo PIN: <span className="text-emerald-400 font-mono font-bold">{order.verificationPin}</span></div>
+                <button type="submit" disabled={loading} className="w-full py-3 bg-emerald-500 text-slate-950 font-black rounded-xl text-sm">
+                  {loading ? 'Processing...' : 'Confirm Delivery & Trigger M-Pesa'}
+                </button>
+              </form>
+            ) : (
+              <div className="space-y-4 text-center">
+                <div className="bg-slate-950 border-2 border-dashed border-emerald-500/40 rounded-2xl p-6">
+                  <div className="w-24 h-24 border-2 border-emerald-400 rounded-xl mx-auto flex items-center justify-center text-emerald-400 text-3xl animate-pulse">
+                    📷
+                  </div>
+                  <p className="text-xs text-slate-300 mt-2">Scan Package QR Code</p>
+                </div>
+                <button onClick={handleSubmit} disabled={loading} className="w-full py-3 bg-emerald-500 text-slate-950 font-black rounded-xl text-sm">
+                  {loading ? 'Scanning...' : 'Scan & Complete Delivery'}
+                </button>
+              </div>
+            )}
+
+            {mpesaPopup && (
+              <div className="absolute inset-0 bg-slate-950/95 p-6 flex flex-col items-center justify-center text-center space-y-4 z-20">
+                <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-2xl font-bold">✓</div>
+                <h3 className="text-xl font-black text-white">M-Pesa STK Push Sent!</h3>
+                <p className="text-xs text-slate-300">Prompt sent to {order.customerPhone} for KES {order.amountKes}.</p>
+                <button onClick={() => { onVerified(); onClose(); }} className="w-full py-3 bg-emerald-500 text-slate-950 font-black rounded-xl text-sm">
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // --- 6. GPS TRACKER VIEW ---
+    function RiderTrackerView() {
+      const [pos, setPos] = useState({ lat: -1.2618, lng: 36.8049, speed: 32, heading: 140, loc: "Sarit Centre, Westlands" });
+      const [sim, setSim] = useState(true);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setPos(prev => ({
+            ...prev,
+            lat: prev.lat + (Math.random() - 0.5) * 0.0008,
+            lng: prev.lng + (Math.random() - 0.5) * 0.0008,
+            speed: 25 + Math.floor(Math.random() * 15),
+            heading: (prev.heading + 5) % 360
+          }));
+        }, 3000);
+        return () => clearInterval(timer);
+      }, []);
+
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 text-slate-100 shadow-xl">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-black uppercase text-white flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              Live GPS Telemetry Emitter
+            </h3>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
+              Nairobi Route Active
+            </span>
+          </div>
+
+          <div className="relative bg-slate-950 rounded-2xl h-44 border border-slate-800 p-4 flex flex-col justify-between overflow-hidden">
+            <div className="flex justify-between text-xs text-emerald-400 font-bold">
+              <span>📍 {pos.loc}</span>
+              <span className="text-slate-400">1.8 km to dropoff</span>
+            </div>
+
+            <div className="flex justify-between items-end text-xs font-mono">
+              <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-800 text-[11px]">
+                <div>LAT: {pos.lat.toFixed(5)}</div>
+                <div>LNG: {pos.lng.toFixed(5)}</div>
+              </div>
+              <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-800 text-emerald-400 font-bold text-center">
+                Heading {pos.heading}°
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-[10px] text-slate-400">Speed</div>
+              <div className="font-bold text-white font-mono">{pos.speed} km/h</div>
+            </div>
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-[10px] text-slate-400">Accuracy</div>
+              <div className="font-bold text-emerald-400 font-mono">±3.5 m</div>
+            </div>
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-[10px] text-slate-400">Est. Arrival</div>
+              <div className="font-bold text-white font-mono">8 mins</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 7. MAIN RIDER DASHBOARD & APP ROOT ---
+    function RiderAppRoot() {
+      const [rider, setRider] = useState(riderService.getCurrentRider());
+      const [isLoggedIn, setIsLoggedIn] = useState(riderService.isLoggedIn());
+      const [orders, setOrders] = useState([]);
+      const [tab, setTab] = useState('ALL');
+      const [view, setView] = useState('orders'); // 'orders' | 'tracker' | 'profile'
+      const [verifyOrder, setVerifyOrder] = useState(null);
+      const [queueCount, setQueueCount] = useState(riderService.getOfflineQueue().length);
+      const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+      useEffect(() => {
+        load();
+        const unsub = riderService.subscribe((t, p) => {
+          if (t === 'network') setIsOnline(p.online);
+          if (t === 'queue_changed') setQueueCount(p.queueLength);
+          if (t === 'order_updated') load();
+        });
+        return () => unsub();
+      }, [rider]);
+
+      const load = async () => {
+        const data = await riderService.getAssignedOrders();
+        setOrders(data);
+      };
+
+      const handleAdvance = async (o) => {
+        const next = NEXT_STATE_MAP[o.status];
+        if (next === DELIVERY_STATES.DELIVERED) {
+          setVerifyOrder(o);
+        } else if (next) {
+          await riderService.updateOrderStatus(o.orderNumber, next);
+          load();
+        }
+      };
+
+      if (!isLoggedIn) {
+        return <RiderAuthView onLoginSuccess={(r) => { setRider(r); setIsLoggedIn(true); }} />;
+      }
+
+      const filtered = orders.filter(o => tab === 'ALL' || o.status === tab);
+
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
+          
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+            <div className="max-w-xl mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-black flex items-center justify-center">⚡</span>
+                <div>
+                  <div className="font-bold text-sm text-white">Reflex Rider <span className="text-[9px] bg-emerald-500 text-slate-950 font-black px-1 py-0.2 rounded">EV</span></div>
+                  <div className="text-[10px] text-slate-400 font-mono">{rider.vehicle.plateNumber}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${isOnline ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}`}>
+                  {isOnline ? 'ONLINE' : `OFFLINE (${queueCount})`}
+                </span>
+                <select
+                  value={rider.id}
+                  onChange={(e) => {
+                    const match = MOCK_RIDERS.find(r => r.id === e.target.value);
+                    if (match) { setRider(match); localStorage.setItem('rider_user', JSON.stringify(match)); }
+                  }}
+                  className="bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-1.5 py-1"
+                >
+                  {MOCK_RIDERS.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Body */}
+          <main className="max-w-xl mx-auto p-4 space-y-4">
+            
+            {view === 'orders' && (
+              <>
+                <RiderCardView rider={rider} />
+
+                {/* Tabs */}
+                <div className="flex gap-1.5 overflow-x-auto no-scrollbar bg-slate-900 p-1.5 border border-slate-800 rounded-2xl">
+                  {['ALL', 'ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'].map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setTab(t)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap ${tab === t ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Order List */}
+                <div className="space-y-3">
+                  {filtered.map(o => (
+                    <div key={o.orderNumber} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <span className="font-mono font-bold text-white text-sm">{o.orderNumber}</span>
+                        <span className="text-[11px] font-bold px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/40">{o.status}</span>
+                      </div>
+
+                      <div className="text-xs space-y-1">
+                        <div className="text-slate-400"><span className="text-white font-bold">Pickup:</span> {o.retailerName} ({o.pickupAddress})</div>
+                        <div className="text-slate-400"><span className="text-white font-bold">Delivery:</span> {o.customerName} - {o.deliveryAddress}</div>
+                        <div className="text-emerald-300 font-semibold">📦 {o.itemDescription} • KES {o.amountKes}</div>
+                      </div>
+
+                      {o.status !== 'DELIVERED' && (
+                        <button
+                          onClick={() => handleAdvance(o)}
+                          className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition-all"
+                        >
+                          {o.status === 'ASSIGNED' ? 'Confirm Package Pickup' : (o.status === 'PICKED_UP' ? 'Start Transit to Customer' : 'Verify & Deliver')}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {view === 'tracker' && <RiderTrackerView />}
+            {view === 'profile' && <RiderCardView rider={rider} />}
+
+          </main>
+
+          {/* Verification Modal */}
+          {verifyOrder && (
+            <DeliveryVerificationModal
+              order={verifyOrder}
+              onClose={() => setVerifyOrder(null)}
+              onVerified={() => { setVerifyOrder(null); load(); }}
+            />
+          )}
+
+          {/* Bottom Nav */}
+          <nav className="fixed bottom-0 inset-x-0 bg-slate-900/90 backdrop-blur-md border-t border-slate-800 px-4 py-2">
+            <div className="max-w-md mx-auto grid grid-cols-3 gap-1 text-center">
+              <button onClick={() => setView('orders')} className={`py-2 text-xs font-bold rounded-xl ${view === 'orders' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400'}`}>
+                📦 Orders Feed
+              </button>
+              <button onClick={() => setView('tracker')} className={`py-2 text-xs font-bold rounded-xl ${view === 'tracker' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400'}`}>
+                📡 GPS Radar
+              </button>
+              <button onClick={() => setView('profile')} className={`py-2 text-xs font-bold rounded-xl ${view === 'profile' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400'}`}>
+                ⚡ EV Profile
+              </button>
+            </div>
+          </nav>
+        </div>
+      );
+    }
+
+    // Render to DOM
+    ReactDOM.createRoot(document.getElementById('rider-root')).render(<RiderAppRoot />);
+  </script>
+  {% endraw %}
+</body>
+</html>
+

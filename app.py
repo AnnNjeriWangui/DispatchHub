@@ -70,6 +70,11 @@ def generate_order_number():
 def index():
     return render_template('index.html')
 
+@app.route('/rider')
+def rider_portal():
+    return render_template('rider.html')
+
+
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({
