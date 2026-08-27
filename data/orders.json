@@ -1,5 +1,25 @@
 [
   {
+    "order_number": "ORD-2026-0828-001",
+    "retailer_id": "RET-001",
+    "customer_name": "Wanjiku Kimani",
+    "customer_phone": "+254 711 234 567",
+    "delivery_address": "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
+    "item_description": "Luxury white rose bouquet with glass vase",
+    "special_instructions": "Fragile vase",
+    "status": "Delivered",
+    "dispatcher_id": "DISP-005",
+    "dispatcher_name": "Boniface Maina",
+    "driver_phone": "+254 705 990 011",
+    "vehicle_type": "Courier Van (High-Security)",
+    "vehicle_reg": "KCJ 554B",
+    "created_at": "2026-08-28T00:27:54.509776",
+    "updated_at": "2026-08-28T00:27:54.550265",
+    "dispatched_at": "2026-08-28T00:27:54.530934",
+    "delivered_at": "2026-08-28T00:27:54.550265",
+    "eta_minutes": 0
+  },
+  {
     "order_number": "ORD-2026-0826-007",
     "retailer_id": "RET-001",
     "customer_name": "Wanjiku Kimani",
