@@ -19,7 +19,10 @@ export default function RiderApp() {
         setIsOnline(payload.online);
       } else if (type === 'queue_changed') {
         setOfflineQueueCount(payload.queueLength);
+      } else if (type === 'rider_updated') {
+        setCurrentRider(payload);
       }
+
     });
     return () => unsubscribe();
   }, []);

@@ -147,7 +147,14 @@ export default function RiderDashboard({ rider, onOpenTracker }) {
       )}
 
       {/* RIDER PROFILE CARD VIEW */}
-      <RiderCard rider={rider} />
+      <RiderCard
+        rider={rider}
+        onStatusToggle={(newDutyStatus) => {
+          const updatedRider = riderService.updateRiderDutyStatus(rider?.id, newDutyStatus);
+          showToast(`Duty status updated to ${newDutyStatus}`);
+        }}
+      />
+
 
       {/* FILTER TABS & SEARCH */}
       <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-3 shadow-lg">

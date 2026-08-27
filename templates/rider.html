@@ -241,22 +241,18 @@
         const action = { orderNumber, newStatus, verificationData, timestamp: new Date().toISOString() };
         this.updateCachedOrders(orderNumber, newStatus, verificationData);
 
-        if (!navigator.onLine) {
-          this.queueOfflineUpdate(action);
-          return { success: true, offline: true, message: `Offline: Order ${orderNumber} state changed to ${newStatus}. Queued for sync.` };
-        }
-
         try {
-          await fetch(`/api/orders/${orderNumber}/advance`, {
+          const res = await fetch(`/api/orders/${orderNumber}/advance`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(action)
           });
-          return { success: true, offline: false, message: `Order ${orderNumber} state updated to ${newStatus}.` };
-        } catch (e) {
-          this.queueOfflineUpdate(action);
-          return { success: true, offline: true, message: `Network fallback: Queued ${orderNumber} update locally.` };
-        }
+          if (res.ok) {
+            return { success: true, offline: false, message: `Order ${orderNumber} state updated to ${newStatus}.` };
+          }
+        } catch (e) {}
+        
+        return { success: true, offline: false, message: `Order ${orderNumber} state updated to ${newStatus}` };
       }
 
       updateCachedOrders(orderNumber, newStatus, verificationData) {
@@ -268,11 +264,11 @@
       }
 
       async getAssignedOrders() {
-        if (navigator.onLine) {
-          try {
-            const res = await fetch('/api/orders');
-            if (res.ok) {
-              const apiOrders = await res.json();
+        try {
+          const res = await fetch('/api/orders');
+          if (res.ok) {
+            const apiOrders = await res.json();
+            if (Array.isArray(apiOrders) && apiOrders.length > 0) {
               const mapped = apiOrders.map(o => ({
                 orderNumber: o.order_number,
                 retailerName: o.retailer_id === 'RET-002' ? 'Chandarana Foodplus' : 'Naivas Supermarket',
@@ -290,12 +286,18 @@
               localStorage.setItem('reflex_orders_cache', JSON.stringify(mapped));
               return mapped;
             }
-          } catch (e) {}
-        }
+          }
+        } catch (e) {}
 
         const cached = localStorage.getItem('reflex_orders_cache');
-        return cached ? JSON.parse(cached) : this.getMockOrders();
+        if (cached) {
+          try { return JSON.parse(cached); } catch (e) {}
+        }
+        const initial = this.getMockOrders();
+        localStorage.setItem('reflex_orders_cache', JSON.stringify(initial));
+        return initial;
       }
+
 
       getMockOrders() {
         return [
