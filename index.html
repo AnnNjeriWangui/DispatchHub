@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DispatchHub - Retailer Portal & Delivery Dashboard</title>
+  <meta name="description" content="Intelligent multi-retailer delivery dispatch & order tracking portal for Kenya logistics.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="theme-light">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <div class="brand-logo">
+        <i data-lucide="truck"></i>
+      </div>
+      <div class="brand-text">
+        <h1>Dispatch<span class="brand-accent">Hub</span></h1>
+        <span class="brand-subtitle">Retailer Logistics & Dispatch OS</span>
+      </div>
+    </div>
+
+    <!-- Active Retailer Profile Selector -->
+    <div class="retailer-selector-container">
+      <label for="retailerSelect" class="selector-label">
+        <i data-lucide="store"></i> Active Retailer:
+      </label>
+      <div class="custom-select-wrapper">
+        <select id="retailerSelect" class="retailer-select" aria-label="Select Retailer Account">
+          <!-- Populated dynamically via JS -->
+        </select>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="system-time">
+        <span class="pulse-dot"></span>
+        <span id="currentTime">Nairobi (EAT)</span>
+      </div>
+      <!-- Theme Switcher -->
+      <button id="btnThemeToggle" class="btn btn-outline btn-sm theme-toggle-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+        <i data-lucide="moon" id="themeIcon"></i>
+        <span id="themeText">Dark</span>
+      </button>
+      <button id="btnNewOrderHeader" class="btn btn-primary btn-sm glow-btn">
+        <i data-lucide="plus-circle"></i> New Delivery
+      </button>
+    </div>
+  </header>
+
+  <!-- Retailer Profile Banner -->
+  <section class="retailer-profile-banner" id="retailerProfileBanner">
+    <div class="profile-card">
+      <div class="profile-avatar" id="retailerAvatar">🌸</div>
+      <div class="profile-details">
+        <div class="profile-header-row">
+          <h2 id="retailerName">Savanna Blooms & Florist</h2>
+          <span class="badge badge-retailer-id" id="retailerIdBadge">RET-001</span>
+          <span class="badge badge-category" id="retailerCategory">Fresh Florals & Gifts</span>
+        </div>
+        <div class="profile-meta-row">
+          <div class="meta-item">
+            <i data-lucide="user"></i>
+            <span id="retailerOwner">Evelyn Mutua</span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="phone"></i>
+            <span id="retailerPhone">+254 712 345 678</span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="map-pin"></i>
+            <span id="retailerLocation">Westlands, Nairobi</span>
+          </div>
+        </div>
+        <div class="profile-instruction-tag">
+          <i data-lucide="shield-alert"></i>
+          <span>Default Note: <strong id="retailerDefaultNote">"Keep upright and away from direct sunlight; fragile glass vases."</strong></span>
+        </div>
+      </div>
+      <div class="profile-quick-actions">
+        <button class="btn btn-glass btn-sm" id="btnBrowseCatalog">
+          <i data-lucide="package"></i> Quick Catalog
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-container">
+    
+    <!-- 1: Top Metrics Overview Banner -->
+    <section class="metrics-grid" aria-label="Top Metrics Overview Banner">
+      <div class="metric-card metric-total" data-filter="ALL">
+        <div class="metric-icon-wrap">
+          <i data-lucide="clipboard-list"></i>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">Total Orders Today</span>
+          <div class="metric-value-wrap">
+            <h3 class="metric-number" id="metricTotalOrders">0</h3>
+            <span class="metric-trend"><i data-lucide="activity"></i> Logged</span>
+          </div>
+        </div>
+        <div class="metric-bg-glow"></div>
+      </div>
+
+      <div class="metric-card metric-pending" data-filter="Pending">
+        <div class="metric-icon-wrap">
+          <i data-lucide="clock-4"></i>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">Pending Dispatch Queue</span>
+          <div class="metric-value-wrap">
+            <h3 class="metric-number" id="metricPendingOrders">0</h3>
+            <span class="metric-badge-tag tag-amber">Awaiting Fleet</span>
+          </div>
+        </div>
+        <div class="metric-bg-glow"></div>
+      </div>
+
+      <div class="metric-card metric-active" data-filter="In Transit">
+        <div class="metric-icon-wrap">
+          <i data-lucide="navigation"></i>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">Active Deliveries</span>
+          <div class="metric-value-wrap">
+            <h3 class="metric-number" id="metricActiveOrders">0</h3>
+            <span class="metric-badge-tag tag-blue">In Transit / Assigned</span>
+          </div>
+        </div>
+        <div class="metric-bg-glow"></div>
+      </div>
+
+      <div class="metric-card metric-delivered" data-filter="Delivered">
+        <div class="metric-icon-wrap">
+          <i data-lucide="check-circle-2"></i>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">Delivered Orders</span>
+          <div class="metric-value-wrap">
+            <h3 class="metric-number" id="metricDeliveredOrders">0</h3>
+            <span class="metric-badge-tag tag-emerald">Completed</span>
+          </div>
+        </div>
+        <div class="metric-bg-glow"></div>
+      </div>
+    </section>
+
+    <!-- 2: Quick Search & Status Bar -->
+    <section class="search-status-section" aria-label="Quick Search and Status Bar">
+      <div class="search-bar-card">
+        <div class="search-input-wrapper">
+          <i data-lucide="search" class="search-icon"></i>
+          <input 
+            type="text" 
+            id="orderSearchInput" 
+            placeholder="Search Order Number (e.g. ORD-2026-0826-001) or customer name, location, dispatcher..." 
+            autocomplete="off"
+            aria-label="Quick Order Search"
+          >
+          <button id="btnClearSearch" class="btn-clear hidden" aria-label="Clear Search">
+            <i data-lucide="x"></i>
+          </button>
+          <button id="btnExecuteSearch" class="btn btn-secondary btn-sm">
+            <i data-lucide="arrow-right"></i> Track
+          </button>
+        </div>
+        
+        <!-- Search Example Pills -->
+        <div class="search-suggestions">
+          <span class="suggestion-title">Quick Lookups:</span>
+          <button class="chip-sample" data-order="ORD-2026-0826-001">ORD-2026-0826-001</button>
+          <button class="chip-sample" data-order="ORD-2026-0826-002">ORD-2026-0826-002</button>
+          <button class="chip-sample" data-order="ORD-2026-0826-003">ORD-2026-0826-003</button>
+          <button class="chip-sample" data-order="ORD-2026-0826-004">ORD-2026-0826-004</button>
+        </div>
+
+        <!-- Quick Status Card Popup on Specific Match -->
+        <div id="quickSearchResult" class="quick-result-panel hidden">
+          <div class="quick-result-header">
+            <div class="result-order-title">
+              <span class="result-ord-number" id="resOrderNumber">ORD-2026-0826-001</span>
+              <span class="badge" id="resStatusBadge">In Transit</span>
+            </div>
+            <button class="btn-icon-sm" id="btnCloseQuickResult" aria-label="Close Preview">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
+          <div class="quick-result-grid">
+            <div class="result-cell">
+              <span class="cell-label"><i data-lucide="user-check"></i> Assigned Dispatcher</span>
+              <strong class="cell-val" id="resDispatcherName">Jackson Kiprotich</strong>
+            </div>
+            <div class="result-cell">
+              <span class="cell-label"><i data-lucide="phone-call"></i> Driver Phone</span>
+              <a href="#" class="cell-val phone-link" id="resDriverPhone">+254 701 112 233</a>
+            </div>
+            <div class="result-cell">
+              <span class="cell-label"><i data-lucide="bike"></i> Vehicle Type & Reg</span>
+              <strong class="cell-val" id="resVehicleType">Boda Boda (KMD 492T)</strong>
+            </div>
+            <div class="result-cell">
+              <span class="cell-label"><i data-lucide="map-pin"></i> Destination</span>
+              <strong class="cell-val" id="resDeliveryAddress">Kilimani, Nairobi</strong>
+            </div>
+          </div>
+
+          <div class="quick-timeline" id="resTimeline">
+            <div class="timeline-step active" id="stepPlaced">
+              <div class="step-dot"></div>
+              <span>Request Placed</span>
+            </div>
+            <div class="timeline-bar"></div>
+            <div class="timeline-step active" id="stepAssigned">
+              <div class="step-dot"></div>
+              <span>Fleet Assigned</span>
+            </div>
+            <div class="timeline-bar"></div>
+            <div class="timeline-step active" id="stepTransit">
+              <div class="step-dot"></div>
+              <span>In Transit</span>
+            </div>
+            <div class="timeline-bar"></div>
+            <div class="timeline-step" id="stepDelivered">
+              <div class="step-dot"></div>
+              <span>Delivered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 & 4: Deliveries Queue & Management Section -->
+    <section class="orders-section">
+      <div class="section-header">
+        <div class="header-left">
+          <div class="section-title-wrap">
+            <i data-lucide="layers"></i>
+            <h2>Active Deliveries & Dispatch Queue</h2>
+          </div>
+          <!-- Filter Tabs -->
+          <div class="filter-tabs" role="tablist">
+            <button class="tab-btn active" data-tab="ALL">All (<span id="countAll">0</span>)</button>
+            <button class="tab-btn" data-tab="Pending">Pending (<span id="countPending">0</span>)</button>
+            <button class="tab-btn" data-tab="In Transit">In Transit (<span id="countTransit">0</span>)</button>
+            <button class="tab-btn" data-tab="Delivered">Delivered (<span id="countDelivered">0</span>)</button>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-outline btn-sm" id="btnRefreshOrders" title="Refresh Live Queue">
+            <i data-lucide="refresh-cw"></i> Refresh
+          </button>
+          <button class="btn btn-primary" id="btnOpenCreateModal">
+            <i data-lucide="plus"></i> Create Delivery Request
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders Table Container -->
+      <div class="table-container">
+        <table class="orders-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Delivery Destination</th>
+              <th>Item Description</th>
+              <th>Special Instructions</th>
+              <th>Status</th>
+              <th>Assigned Dispatcher</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Empty state placeholder -->
+        <div id="emptyState" class="empty-state hidden">
+          <div class="empty-icon"><i data-lucide="inbox"></i></div>
+          <h3>No Orders Found</h3>
+          <p>No delivery orders match the current filter or search criteria.</p>
+          <button class="btn btn-primary btn-sm" id="btnEmptyCreate">
+            <i data-lucide="plus"></i> Create First Delivery Request
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 3: Modal - Create New Delivery Request Form -->
+  <div class="modal-overlay hidden" id="modalCreateOrder" role="dialog" aria-modal="true" aria-labelledby="modalCreateTitle">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">
+            <i data-lucide="package-plus"></i>
+          </div>
+          <div>
+            <h3 id="modalCreateTitle">Create New Delivery Request</h3>
+            <p class="modal-subtitle">Auto-stamped with <span class="badge badge-retailer-id" id="modalRetailerStamp">RET-001</span></p>
+          </div>
+        </div>
+        <button class="btn-modal-close" id="btnCloseCreateModal" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <form id="createOrderForm" class="modal-form">
+        <!-- Kenyan Customer Auto-Select Preset -->
+        <div class="form-preset-bar">
+          <div class="preset-header">
+            <span class="preset-label"><i data-lucide="users"></i> Quick Fill: Select Kenyan Customer (6 Profiles)</span>
+          </div>
+          <div class="customer-chips-grid" id="customerChipsGrid">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="inputCustomerName">Customer Name <span class="req">*</span></label>
+            <div class="input-with-icon">
+              <i data-lucide="user"></i>
+              <input type="text" id="inputCustomerName" name="customer_name" required placeholder="e.g. Wanjiku Kimani">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputCustomerPhone">Customer Phone (+254) <span class="req">*</span></label>
+            <div class="input-with-icon">
+              <i data-lucide="phone"></i>
+              <input type="text" id="inputCustomerPhone" name="customer_phone" required placeholder="+254 7XX XXX XXX">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputDeliveryAddress">Delivery Address (Nairobi / Kenya) <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="map-pin"></i>
+            <input type="text" id="inputDeliveryAddress" name="delivery_address" required placeholder="e.g. Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani">
+          </div>
+        </div>
+
+        <!-- Catalog Preset Suggestions for the Active Retailer -->
+        <div class="form-preset-bar">
+          <div class="preset-header">
+            <span class="preset-label"><i data-lucide="sparkles"></i> Retailer Catalog Presets</span>
+          </div>
+          <div class="catalog-chips-grid" id="catalogChipsGrid">
+            <!-- Populated dynamically via JS based on active retailer -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputItemDescription">Item Description <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="box"></i>
+            <input type="text" id="inputItemDescription" name="item_description" required placeholder="e.g. Luxury white rose bouquet with glass vase">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputSpecialInstructions">Special Handling Instructions</label>
+          <div class="input-with-icon">
+            <i data-lucide="alert-triangle"></i>
+            <textarea id="inputSpecialInstructions" name="special_instructions" rows="2" placeholder="e.g. Keep upright and away from direct sunlight; fragile glass vases."></textarea>
+          </div>
+        </div>
+
+        <div class="form-row-2 form-footer-options">
+          <label class="checkbox-container">
+            <input type="checkbox" id="checkAutoAssign" checked>
+            <span class="checkmark"></span>
+            <span class="checkbox-text">
+              <strong>Instant Auto-Assignment</strong>
+              <small>Instantly match closest available fleet driver</small>
+            </span>
+          </label>
+          <div class="order-id-preview">
+            <span>Generated Order #:</span>
+            <strong id="previewOrderNum">ORD-2026-0826-00X</strong>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="btnCancelCreate">Cancel</button>
+          <button type="submit" class="btn btn-primary glow-btn" id="btnSubmitCreate">
+            <i data-lucide="send"></i> Push to Dispatch Queue
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Order Details -->
+  <div class="modal-overlay hidden" id="modalEditOrder" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">
+            <i data-lucide="edit-3"></i>
+          </div>
+          <div>
+            <h3>Edit Delivery Request</h3>
+            <p class="modal-subtitle">Modifying <span class="badge badge-retailer-id" id="editModalOrderNum">ORD-000</span></p>
+          </div>
+        </div>
+        <button class="btn-modal-close" id="btnCloseEditModal" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <form id="editOrderForm" class="modal-form">
+        <input type="hidden" id="editOrderNumber" name="order_number">
+        
+        <div class="form-group">
+          <label for="editCustomerName">Customer Name</label>
+          <input type="text" id="editCustomerName" name="customer_name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editCustomerPhone">Customer Phone</label>
+          <input type="text" id="editCustomerPhone" name="customer_phone" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editDeliveryAddress">Delivery Address</label>
+          <input type="text" id="editDeliveryAddress" name="delivery_address" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemDescription">Item Description</label>
+          <input type="text" id="editItemDescription" name="item_description" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editSpecialInstructions">Special Instructions</label>
+          <textarea id="editSpecialInstructions" name="special_instructions" rows="2"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="btnCancelEdit">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitEdit">
+            <i data-lucide="check"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Retailer Catalog & Profiles Reference -->
+  <div class="modal-overlay hidden" id="modalCatalogQuickView" role="dialog" aria-modal="true">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">
+            <i data-lucide="shopping-bag"></i>
+          </div>
+          <div>
+            <h3>Retailer Catalog & Special Instructions</h3>
+            <p class="modal-subtitle">5 Pre-configured Retailer Profiles & Categories</p>
+          </div>
+        </div>
+        <button class="btn-modal-close" id="btnCloseCatalogModal" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="catalog-cards-container" id="catalogCardsContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container for Notifications -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+  <script>
+    // Initialize Lucide icons on DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
