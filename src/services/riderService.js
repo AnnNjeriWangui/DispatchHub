@@ -1,5 +1,6 @@
 /**
- * Reflex Rider Service - API Client, Offline Queue & Delivery State Machine
+ * Reflex Rider Service - API Client, Offline Queue & Local-First State Machine
+ * Supports pure static deployments (e.g. Vercel) using localStorage & mock data fallback
  */
 
 import { MOCK_RIDERS } from '../data/mockRiders.js';
@@ -7,8 +8,22 @@ import { MOCK_RIDERS } from '../data/mockRiders.js';
 const STORAGE_KEYS = {
   TOKEN: 'rider_token',
   USER: 'rider_user',
+  RIDERS_CACHE: 'reflex_riders_cache',
   OFFLINE_QUEUE: 'reflex_offline_queue',
   ORDERS_CACHE: 'reflex_orders_cache'
+};
+
+// Check if a remote backend API is configured
+const getApiUrl = () => {
+  if (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) {
+    return process.env.VITE_API_URL;
+  }
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL;
+    }
+  } catch (e) {}
+  return null; // Default to static client-side mode
 };
 
 // Delivery Lifecycle State Transitions
@@ -33,6 +48,19 @@ class RiderService {
     this.online = typeof navigator !== 'undefined' ? navigator.onLine : true;
     this.listeners = new Set();
     this.setupOnlineListeners();
+    this.initLocalStorage();
+  }
+
+  initLocalStorage() {
+    if (typeof localStorage === 'undefined') return;
+    // Seed initial mock riders if cache empty
+    if (!localStorage.getItem(STORAGE_KEYS.RIDERS_CACHE)) {
+      localStorage.setItem(STORAGE_KEYS.RIDERS_CACHE, JSON.stringify(MOCK_RIDERS));
+    }
+    // Seed initial orders cache if empty
+    if (!localStorage.getItem(STORAGE_KEYS.ORDERS_CACHE)) {
+      localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(this.getMockOrders()));
+    }
   }
 
   setupOnlineListeners() {
@@ -40,7 +68,7 @@ class RiderService {
       window.addEventListener('online', () => {
         this.online = true;
         this.notifyListeners('network', { online: true });
-        this.flushOfflineQueue();
+        if (getApiUrl()) this.flushOfflineQueue();
       });
 
       window.addEventListener('offline', () => {
@@ -61,7 +89,6 @@ class RiderService {
 
   // --- Auth Services ---
   async loginWithPhone(phoneNumber, otpCode) {
-    // Validate Kenyan format: 07XXXXXXXX, 01XXXXXXXX, or +254XXXXXXXX
     const cleanPhone = phoneNumber.trim().replace(/\s+/g, '');
     const isKenyan = /^(\+254|0)[17]\d{8}$/.test(cleanPhone);
     
@@ -73,25 +100,28 @@ class RiderService {
       throw new Error('Please enter the valid 6-digit OTP code sent to your phone.');
     }
 
-    // Match or create rider profile
-    const matchedRider = MOCK_RIDERS.find(r => 
+    const riders = this.getAllRiders();
+    const matchedRider = riders.find(r => 
       cleanPhone.includes(r.formattedPhone.slice(-8))
-    ) || MOCK_RIDERS[0];
+    ) || riders[0];
 
     const token = `jwt_rider_${matchedRider.id}_${Date.now()}`;
     
     localStorage.setItem(STORAGE_KEYS.TOKEN, token);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(matchedRider));
+    this.notifyListeners('auth', { loggedIn: true, rider: matchedRider });
 
     return { token, rider: matchedRider };
   }
 
   async loginWithGoogle() {
-    const defaultRider = MOCK_RIDERS[1]; // Faith Wambui as default Google account demo
+    const riders = this.getAllRiders();
+    const defaultRider = riders[1] || riders[0]; // Faith Wambui default
     const token = `jwt_google_${defaultRider.id}_${Date.now()}`;
 
     localStorage.setItem(STORAGE_KEYS.TOKEN, token);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(defaultRider));
+    this.notifyListeners('auth', { loggedIn: true, rider: defaultRider });
 
     return { token, rider: defaultRider };
   }
@@ -104,12 +134,44 @@ class RiderService {
 
   getCurrentRider() {
     const userJson = localStorage.getItem(STORAGE_KEYS.USER);
-    if (!userJson) return MOCK_RIDERS[0]; // Default fallback for preview
+    if (!userJson) return MOCK_RIDERS[0];
     try {
       return JSON.parse(userJson);
     } catch {
       return MOCK_RIDERS[0];
     }
+  }
+
+  getAllRiders() {
+    const cached = localStorage.getItem(STORAGE_KEYS.RIDERS_CACHE);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return MOCK_RIDERS;
+  }
+
+  updateRiderDutyStatus(riderId, newDutyStatus) {
+    const riders = this.getAllRiders();
+    const updatedRiders = riders.map(r => {
+      if (r.id === riderId) {
+        return { ...r, dutyStatus: newDutyStatus };
+      }
+      return r;
+    });
+
+    localStorage.setItem(STORAGE_KEYS.RIDERS_CACHE, JSON.stringify(updatedRiders));
+
+    const current = this.getCurrentRider();
+    if (current.id === riderId) {
+      const updatedCurrent = { ...current, dutyStatus: newDutyStatus };
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedCurrent));
+      this.notifyListeners('rider_updated', updatedCurrent);
+      return updatedCurrent;
+    }
+    this.notifyListeners('riders_list_updated', updatedRiders);
+    return current;
   }
 
   isLoggedIn() {
@@ -120,37 +182,39 @@ class RiderService {
   async getAssignedOrders(riderId = null) {
     const currentRider = this.getCurrentRider();
     const targetRiderId = riderId || currentRider.id;
+    const apiUrl = getApiUrl();
 
-    if (navigator.onLine) {
+    // If backend API URL is explicitly configured and online, attempt API fetch
+    if (apiUrl && navigator.onLine) {
       try {
-        const response = await fetch('/api/orders');
+        const response = await fetch(`${apiUrl}/api/orders`);
         if (response.ok) {
           const apiOrders = await response.json();
-          // Transform backend statuses to Rider State Machine conventions
           const mapped = apiOrders.map(o => this.normalizeOrder(o, targetRiderId));
           localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(mapped));
           return mapped;
         }
       } catch (e) {
-        console.warn('API connection failed, using local cache / mock fallback:', e);
+        console.warn('Backend API unavailable. Falling back to local storage state:', e);
       }
     }
 
-    // Fallback to cache or mock orders
+    // Static Client Mode: Read directly from localStorage
     const cached = localStorage.getItem(STORAGE_KEYS.ORDERS_CACHE);
     if (cached) {
       try {
         return JSON.parse(cached);
       } catch (e) {
-        console.warn('Failed parsing cached orders', e);
+        console.warn('Failed parsing cached orders:', e);
       }
     }
 
-    return this.getMockOrders(targetRiderId);
+    const initialMocks = this.getMockOrders(targetRiderId);
+    localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(initialMocks));
+    return initialMocks;
   }
 
   normalizeOrder(order, riderId) {
-    // Map backend statuses (Pending, In Transit, Delivered) to Rider states
     let normalizedStatus = DELIVERY_STATES.ASSIGNED;
     if (order.status === 'In Transit') normalizedStatus = DELIVERY_STATES.IN_TRANSIT;
     else if (order.status === 'Delivered') normalizedStatus = DELIVERY_STATES.DELIVERED;
@@ -248,7 +312,7 @@ class RiderService {
     ];
   }
 
-  // --- State Machine Transition with Offline Resilience ---
+  // --- State Machine Transition (Pure Frontend / LocalStorage + optional API) ---
   async updateOrderStatus(orderNumber, newStatus, verificationData = null) {
     const updatePayload = {
       orderNumber,
@@ -257,11 +321,21 @@ class RiderService {
       timestamp: new Date().toISOString()
     };
 
-    // Update local cached order feed immediately for instant UI responsiveness
-    this.updateCachedOrder(orderNumber, newStatus, verificationData);
+    // 1. Update local state immediately for instant, reliable UI response
+    const updatedOrders = this.updateCachedOrder(orderNumber, newStatus, verificationData);
+
+    const apiUrl = getApiUrl();
+    if (!apiUrl) {
+      // Static mode: Pure local state mutation
+      return {
+        success: true,
+        offline: false,
+        message: `Order ${orderNumber} state changed to ${newStatus}`,
+        orders: updatedOrders
+      };
+    }
 
     if (!navigator.onLine) {
-      // Offline mode: Queue for auto-sync when network returns
       this.queueOfflineUpdate(updatePayload);
       return {
         success: true,
@@ -270,26 +344,16 @@ class RiderService {
       };
     }
 
-    // Online mode: Send update to server backend
+    // Backend configured: Fire-and-forget sync or attempt endpoint call
     try {
-      const response = await fetch(`/api/orders/${orderNumber}/advance`, {
+      await fetch(`${apiUrl}/api/orders/${orderNumber}/advance`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatePayload)
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        return { success: true, offline: false, data };
-      }
     } catch (e) {
-      console.warn('Network request failed during status update. Queueing offline update:', e);
+      console.warn('API sync failed during status update. Queueing offline update:', e);
       this.queueOfflineUpdate(updatePayload);
-      return {
-        success: true,
-        offline: true,
-        message: `Network glitch: Queued order ${orderNumber} update locally.`
-      };
     }
 
     return { success: true, offline: false, message: `Status updated to ${newStatus}` };
@@ -312,7 +376,8 @@ class RiderService {
     });
 
     localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(orders));
-    this.notifyListeners('order_updated', { orderNumber, newStatus });
+    this.notifyListeners('order_updated', { orderNumber, newStatus, orders });
+    return orders;
   }
 
   // --- Offline Queue Manager ---
@@ -334,21 +399,24 @@ class RiderService {
   }
 
   async flushOfflineQueue() {
+    const apiUrl = getApiUrl();
+    if (!apiUrl) return;
+
     const queue = this.getOfflineQueue();
     if (queue.length === 0) return;
 
-    console.log(`[Reflex Offline Sync] Restored connection! Syncing ${queue.length} offline updates...`);
+    console.log(`[Reflex Offline Sync] Syncing ${queue.length} offline updates to ${apiUrl}...`);
     const failedQueue = [];
 
     for (const update of queue) {
       try {
-        await fetch(`/api/orders/${update.orderNumber}/advance`, {
+        await fetch(`${apiUrl}/api/orders/${update.orderNumber}/advance`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(update)
         });
       } catch (e) {
-        console.error(`Failed to sync update for ${update.orderNumber}`, e);
+        console.error(`Failed syncing update for ${update.orderNumber}`, e);
         failedQueue.push(update);
       }
     }
@@ -364,7 +432,6 @@ class RiderService {
 
   // --- Payment Trigger: M-Pesa STK Push ---
   async triggerMpesaSTKPush(phoneNumber, amount, orderNumber) {
-    // Simulates Kenyan M-Pesa Daraja STK Push API call
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -374,7 +441,7 @@ class RiderService {
           ResponseDescription: "Success. Request accepted for processing",
           CustomerMessage: `STK Push prompt sent to ${phoneNumber}. Awaiting PIN entry on customer phone for KES ${amount}.`
         });
-      }, 1200);
+      }, 1000);
     });
   }
 }

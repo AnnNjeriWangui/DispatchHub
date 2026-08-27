@@ -1,5 +1,25 @@
 [
   {
+    "order_number": "ORD-2026-0828-002",
+    "retailer_id": "RET-001",
+    "customer_name": "Wanjiku Kimani",
+    "customer_phone": "+254 711 234 567",
+    "delivery_address": "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
+    "item_description": "Luxury white rose bouquet with glass vase",
+    "special_instructions": "Fragile vase",
+    "status": "Delivered",
+    "dispatcher_id": "DISP-001",
+    "dispatcher_name": "Jackson Kiprotich",
+    "driver_phone": "+254 701 112 233",
+    "vehicle_type": "Boda Boda Motorcycle (Box-Equipped)",
+    "vehicle_reg": "KMD 492T",
+    "created_at": "2026-08-28T01:17:34.807737",
+    "updated_at": "2026-08-28T01:17:34.891098",
+    "dispatched_at": "2026-08-28T01:17:34.848653",
+    "delivered_at": "2026-08-28T01:17:34.891098",
+    "eta_minutes": 0
+  },
+  {
     "order_number": "ORD-2026-0828-001",
     "retailer_id": "RET-001",
     "customer_name": "Wanjiku Kimani",
