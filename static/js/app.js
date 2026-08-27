@@ -100,6 +100,9 @@ const elements = {
   
   // Buttons
   btnRefreshOrders: document.getElementById('btnRefreshOrders'),
+  btnThemeToggle: document.getElementById('btnThemeToggle'),
+  themeIcon: document.getElementById('themeIcon'),
+  themeText: document.getElementById('themeText'),
   currentTime: document.getElementById('currentTime'),
   toastContainer: document.getElementById('toastContainer')
 };
@@ -108,10 +111,32 @@ const elements = {
 // Initialization & Data Loading
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+  initTheme();
   startTimeClock();
   setupEventListeners();
   await loadInitialData();
 });
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('dispatchhub_theme') || 'light';
+  applyTheme(savedTheme);
+}
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.remove('theme-light');
+    document.body.classList.add('theme-dark');
+    if (elements.themeIcon) elements.themeIcon.setAttribute('data-lucide', 'sun');
+    if (elements.themeText) elements.themeText.textContent = 'Light';
+  } else {
+    document.body.classList.remove('theme-dark');
+    document.body.classList.add('theme-light');
+    if (elements.themeIcon) elements.themeIcon.setAttribute('data-lucide', 'moon');
+    if (elements.themeText) elements.themeText.textContent = 'Dark';
+  }
+  localStorage.setItem('dispatchhub_theme', theme);
+  if (window.lucide) lucide.createIcons();
+}
 
 function startTimeClock() {
   const updateTime = () => {
@@ -784,6 +809,16 @@ function setupEventListeners() {
     fetchOrdersAndMetrics();
     showToast('Order queue refreshed', 'info');
   });
+
+  // Theme Switcher Toggle
+  if (elements.btnThemeToggle) {
+    elements.btnThemeToggle.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('theme-dark');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme);
+      showToast(`Switched to ${newTheme === 'light' ? 'Bright White' : 'Dark'} theme`, 'info');
+    });
+  }
 }
 
 // ==========================================

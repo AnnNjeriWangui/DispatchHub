@@ -12,7 +12,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="theme-dark">
+<body class="theme-light">
   <!-- Top Navigation Bar -->
   <header class="top-nav">
     <div class="nav-brand">
@@ -42,6 +42,11 @@
         <span class="pulse-dot"></span>
         <span id="currentTime">Nairobi (EAT)</span>
       </div>
+      <!-- Theme Switcher -->
+      <button id="btnThemeToggle" class="btn btn-outline btn-sm theme-toggle-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+        <i data-lucide="moon" id="themeIcon"></i>
+        <span id="themeText">Dark</span>
+      </button>
       <button id="btnNewOrderHeader" class="btn btn-primary btn-sm glow-btn">
         <i data-lucide="plus-circle"></i> New Delivery
       </button>
