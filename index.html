@@ -486,13 +486,20 @@
   <!-- Toast Container for Notifications -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
+  <!-- React App Root Container -->
+  <div id="root"></div>
+
   <!-- Scripts -->
   <script src="/static/js/app.js"></script>
+  <script type="module" src="/src/main.jsx"></script>
   <script>
     // Initialize Lucide icons on DOM ready
     document.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     });
   </script>
 </body>
 </html>
+
