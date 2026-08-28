@@ -1,0 +1,48 @@
+[
+  {
+    "id": "RIDER-001",
+    "name": "Hesbon Otieno",
+    "gender": "Male",
+    "phone": "+254 712 345 678",
+    "formattedPhone": "0712345678",
+    "email": "hesbon.otieno@reflex.co.ke",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "avatarFallback": "HO",
+    "rating": 4.9,
+    "completedDeliveries": 412,
+    "hub": "Westlands EV Charging Hub",
+    "zone": "Nairobi North",
+    "dutyStatus": "ONLINE",
+    "vehicle": {
+      "model": "Roam Air",
+      "type": "Electric Motorbike",
+      "plateNumber": "KME 102G",
+      "batteryLevel": 88,
+      "estimatedRangeKm": 78,
+      "swapStationNearby": "Sarit Centre Battery Hub (0.4 km)"
+    }
+  },
+  {
+    "id": "RIDER-002",
+    "name": "Faith Wambui",
+    "gender": "Female",
+    "phone": "+254 722 987 654",
+    "formattedPhone": "0722987654",
+    "email": "faith.wambui@reflex.co.ke",
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    "avatarFallback": "FW",
+    "rating": 4.95,
+    "completedDeliveries": 538,
+    "hub": "Kilimani Express Station",
+    "zone": "Nairobi Central",
+    "dutyStatus": "ONLINE",
+    "vehicle": {
+      "model": "Spiro Commuter",
+      "type": "Electric Motorbike",
+      "plateNumber": "KME 340G",
+      "batteryLevel": 74,
+      "estimatedRangeKm": 62,
+      "swapStationNearby": "Yaya Centre Spiro Station (0.8 km)"
+    }
+  }
+]

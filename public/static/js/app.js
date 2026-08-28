@@ -157,24 +157,32 @@ function startTimeClock() {
 async function loadInitialData() {
   try {
     const [retailersRes, customersRes, dispatchersRes] = await Promise.all([
-      fetch('/api/retailers'),
-      fetch('/api/customers'),
-      fetch('/api/dispatchers')
+      fetch('/api/retailers').catch(e => e),
+      fetch('/api/customers').catch(e => e),
+      fetch('/api/dispatchers').catch(e => e)
     ]);
 
-    state.retailers = await retailersRes.json();
-    state.customers = await customersRes.json();
-    state.dispatchers = await dispatchersRes.json();
+    if (retailersRes.ok) state.retailers = await retailersRes.json();
+    if (customersRes.ok) state.customers = await customersRes.json();
+    if (dispatchersRes.ok) state.dispatchers = await dispatchersRes.json();
+
+    // Fallback data if API returns empty
+    if (!state.retailers || state.retailers.length === 0) {
+      state.retailers = [
+        { id: "RET-001", name: "Savanna Blooms & Florist", owner: "Evelyn Mutua", phone: "+254 712 345 678", location: "Westlands, Nairobi", category: "Fresh Florals & Gifts", default_instructions: "Keep upright; fragile glass vases.", avatar: "🌸", color: "#e11d48" }
+      ];
+    }
 
     populateRetailerSelector();
     renderCustomerPresetChips();
     switchRetailer(state.currentRetailerId);
     await fetchOrdersAndMetrics();
   } catch (error) {
-    console.error('Error loading initial data:', error);
-    showToast('Failed to load system data', 'error');
+    console.error('[DispatchHub] Error loading initial data:', error);
+    showToast(`API Fetch Warning: ${error.message || 'Check Flask backend on http://127.0.0.1:5000'}`, 'error');
   }
 }
+
 
 // ==========================================
 // Retailer Profile Handling

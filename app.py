@@ -18,21 +18,33 @@ CORS(app)
 
 # Helper functions for data storage
 def load_json_file(filename):
-    file_path = os.path.join(DATA_DIR, filename)
-    if not os.path.exists(file_path):
-        return []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"Error loading {filename}: {e}")
-        return []
+    for base in ["/tmp/data", DATA_DIR]:
+        file_path = os.path.join(base, filename)
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error loading {file_path}: {e}")
+    return []
 
 def save_json_file(filename, data):
-    file_path = os.path.join(DATA_DIR, filename)
-    os.makedirs(DATA_DIR, exist_ok=True)
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        file_path = os.path.join(DATA_DIR, filename)
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Failed to save to DATA_DIR, trying /tmp: {e}")
+        try:
+            tmp_dir = "/tmp/data"
+            os.makedirs(tmp_dir, exist_ok=True)
+            file_path = os.path.join(tmp_dir, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as e2:
+            print(f"Also failed to save to /tmp: {e2}")
+
 
 def get_orders():
     return load_json_file('orders.json')
@@ -49,21 +61,29 @@ def get_customers():
 def get_dispatchers():
     return load_json_file('dispatchers.json')
 
+def get_riders():
+    return load_json_file('riders.json')
+
+def get_users():
+    return load_json_file('users.json')
+
 def generate_order_number():
     orders = get_orders()
     now = datetime.now()
     date_prefix = f"ORD-{now.year}-{now.strftime('%m%d')}"
-    
-    # Find existing counts for today
     today_orders = [o for o in orders if o.get('order_number', '').startswith(date_prefix)]
     next_idx = len(today_orders) + 1
     new_id = f"{date_prefix}-{next_idx:03d}"
-    
-    # Ensure uniqueness
     while any(o.get('order_number') == new_id for o in orders):
         next_idx += 1
         new_id = f"{date_prefix}-{next_idx:03d}"
     return new_id
+
+@app.before_request
+
+def log_request_info():
+    if request.path.startswith('/api'):
+        print(f"[API Call Log] {request.method} {request.path} - Client: {request.remote_addr}")
 
 # Routes
 @app.route('/')
@@ -84,6 +104,32 @@ def health():
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
+
+@app.route('/api/system', methods=['GET'])
+def system_overview():
+    try:
+        return jsonify({
+            "status": "ok",
+            "service": "DispatchHub API",
+            "version": "1.0.0",
+            "retailers_count": len(get_retailers()),
+            "orders_count": len(get_orders()),
+            "customers_count": len(get_customers()),
+            "dispatchers_count": len(get_dispatchers()),
+            "riders_count": len(get_riders()),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        print(f"Error in /api/system: {e}")
+        return jsonify({
+            "status": "ok",
+            "service": "DispatchHub API",
+            "version": "1.0.0",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }), 200
+
+
 @app.route('/api/retailers', methods=['GET'])
 def list_retailers():
     return jsonify(get_retailers())
@@ -95,6 +141,15 @@ def list_customers():
 @app.route('/api/dispatchers', methods=['GET'])
 def list_dispatchers():
     return jsonify(get_dispatchers())
+
+@app.route('/api/riders', methods=['GET'])
+def list_riders():
+    return jsonify(get_riders())
+
+@app.route('/api/users', methods=['GET'])
+def list_users():
+    return jsonify(get_users())
+
 
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
