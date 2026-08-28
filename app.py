@@ -6,14 +6,32 @@ Flask REST API & Dispatcher Server
 import json
 import os
 import random
+import shutil
 from datetime import datetime, timezone
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
+TMP_DATA_DIR = "/tmp/data"
 
-app = Flask(__name__, static_folder='static', template_folder='templates')
+def init_data_dir():
+    try:
+        os.makedirs(TMP_DATA_DIR, exist_ok=True)
+        if os.path.exists(DATA_DIR):
+            for fname in os.listdir(DATA_DIR):
+                src = os.path.join(DATA_DIR, fname)
+                dst = os.path.join(TMP_DATA_DIR, fname)
+                if os.path.isfile(src) and not os.path.exists(dst):
+                    shutil.copy(src, dst)
+    except Exception as e:
+        print(f"init_data_dir error: {e}")
+
+init_data_dir()
+
+app = Flask(__name__, 
+            static_folder=os.path.join(BASE_DIR, 'static'), 
+            template_folder=os.path.join(BASE_DIR, 'templates'))
 CORS(app)
 
 # In-memory recent live activity event stream
@@ -21,7 +39,7 @@ LIVE_EVENTS = [
     {
         "id": "EVT-001",
         "type": "SYSTEM",
-        "message": "DispatchHub Logistics Engine online & connected to 9 fleet riders.",
+        "message": "DispatchHub Logistics Engine online & connected to fleet riders.",
         "timestamp": datetime.now().isoformat(),
         "badge": "SYSTEM"
     }
@@ -41,39 +59,26 @@ def log_event(event_type, message, badge="INFO"):
     return event
 
 def load_json_file(filename):
-    file_path = os.path.join(DATA_DIR, filename)
-    if os.path.exists(file_path):
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"Error loading {file_path}: {e}")
-    # Fallback to /tmp/data if present
-    tmp_path = os.path.join("/tmp/data", filename)
-    if os.path.exists(tmp_path):
-        try:
-            with open(tmp_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"Error loading {tmp_path}: {e}")
+    for base in [TMP_DATA_DIR, DATA_DIR]:
+        file_path = os.path.join(base, filename)
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error loading {file_path}: {e}")
     return []
 
 def save_json_file(filename, data):
-    file_path = os.path.join(DATA_DIR, filename)
-    os.makedirs(DATA_DIR, exist_ok=True)
-    try:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"Failed to save {file_path}: {e}")
+    for base in [TMP_DATA_DIR, DATA_DIR]:
         try:
-            tmp_dir = "/tmp/data"
-            os.makedirs(tmp_dir, exist_ok=True)
-            tmp_path = os.path.join(tmp_dir, filename)
-            with open(tmp_path, 'w', encoding='utf-8') as f:
+            os.makedirs(base, exist_ok=True)
+            file_path = os.path.join(base, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-        except Exception as e2:
-            print(f"Failed to save to /tmp: {e2}")
+        except Exception as e:
+            # Expected on read-only serverless filesystem like /var/task on Vercel
+            pass
 
 def get_orders():
     return load_json_file('orders.json')
@@ -92,6 +97,12 @@ def get_dispatchers():
 
 def save_dispatchers(dispatchers):
     save_json_file('dispatchers.json', dispatchers)
+
+def get_riders_data():
+    return load_json_file('riders.json')
+
+def get_users_data():
+    return load_json_file('users.json')
 
 def generate_order_number():
     orders = get_orders()
@@ -146,6 +157,14 @@ def list_retailers():
 @app.route('/api/customers', methods=['GET'])
 def list_customers():
     return jsonify(get_customers())
+
+@app.route('/api/users', methods=['GET'])
+def list_users():
+    return jsonify(get_users_data())
+
+@app.route('/api/fleet/ev-riders', methods=['GET'])
+def list_ev_riders():
+    return jsonify(get_riders_data())
 
 @app.route('/api/dispatchers', methods=['GET'])
 @app.route('/api/riders', methods=['GET'])

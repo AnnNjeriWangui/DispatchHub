@@ -1,6 +1,7 @@
 # 🚀 DispatchHub & Reflex Logistics OS
 
-**DispatchHub** is an intelligent multi-retailer last-mile delivery and dispatch management engine engineered for Kenya (Nairobi metropolitan area). It interconnects the three primary delivery stakeholders:
+**DispatchHub** is an intelligent multi-retailer last-mile delivery and dispatch management engine engineered for Kenya (Nairobi metropolitan area). It interconnects the primary delivery stakeholders:
+
 1. **🏪 Retailer Staff** (`/`): Logs new delivery requests with customer details, item descriptions, and special handling instructions.
 2. **🎯 Central Dispatcher** (`/dispatcher`): Automated command center that monitors open requests in real-time, auto-matches orders to riders using smart zone proximity and battery level algorithms, monitors live fleet telematics, and coordinates QR confirmations.
 3. **⚡ EV Delivery Rider** (`/rider`): Sees assigned deliveries on mobile-first interface and progresses status (*Assigned → Picked Up → In Transit → Delivered*).
@@ -8,7 +9,17 @@
 
 ---
 
-## 🌟 3-Role Interconnected Architecture
+## 👥 Core Contributors & Collaborators
+
+This project is built and maintained collaboratively by:
+
+- **👑 Lead / Retailer Portal Architect**: [Ann Njeri Wangui](https://github.com/AnnNjeriWangui) — [DispatchHub Repository](https://github.com/AnnNjeriWangui/DispatchHub)
+- **⚡ EV Fleet & Dispatcher Architect**: [Davis Nguthu](https://github.com/davisnguthu-tech) — [davisnguthu-tech Profile](https://github.com/davisnguthu-tech)
+- **🚀 Logistics Engine & Cloud Systems**: [Justolise](https://github.com/justolise) — [justolise Profile](https://github.com/justolise)
+
+---
+
+## 🌟 4-Portal Interconnected Architecture
 
 ```
        ┌────────────────────────┐
@@ -37,23 +48,45 @@
 
 ---
 
-## 🎯 Central Dispatcher Command Features (`/dispatcher`)
+## 🏬 Pre-Configured Retailer Profiles (`data/retailers.json`)
 
-- **Automated Queue Orchestration**:
-  - 1-Click **⚡ Auto-Assign All** using proximity matching (Westlands, Kilimani, CBD, Karen, Industrial Area, Thika Road).
-  - Manual Rider assignment modal displaying rider avatar, vehicle model, battery %, rating, and current active drop count.
-  - Priority handling (*Urgent vs Standard* tags).
-- **Fleet Telematics & Roster**:
-  - Real-time battery status gauges for electric motorbikes (*Roam Air, Spiro Commuter, Ampersand e-Boda*).
-  - Live Duty status toggle (*Online / Charging at Hub / Offline*).
-  - Click-to-call / SMS direct rider dispatch triggers.
-- **Nairobi Logistics Radar**:
-  - Real-time animated radar visualizer with zone pulse markers and live route status.
-- **Verification & Handover Center**:
-  - Live QR code generator and customer 4-digit verification PIN validator.
-  - One-click simulated customer SMS / WhatsApp tracking update generator.
-- **SLA & Three-Way Trust Financials**:
-  - Retailer commission (5%), Rider per-drop payout (80%), Platform dispatch revenue (15%), and Cash on Delivery (COD) tracking.
+| Retailer ID | Store Name | Owner & Phone | Location | Category |
+| :--- | :--- | :--- | :--- | :--- |
+| **RET-001** | **Savanna Blooms & Florist** | Evelyn Mutua (`+254 712 345 678`) | Westlands, Nairobi | Fresh Florals & Gifts |
+| **RET-002** | **Rift Valley Artisan Crafts** | Kiprono Koech (`+254 722 987 654`) | Karen, Nairobi | Handicrafts & Leatherwear |
+| **RET-003** | **Nairobi Tech & Gadgets Hub** | Brian Omondi (`+254 733 456 789`) | Moi Avenue, CBD | Consumer Electronics |
+| **RET-004** | **Organic Fresh Basket** | Amina Wanjiru (`+254 745 112 233`) | Lavington, Nairobi | Farm-Fresh Produce & Oils |
+| **RET-005** | **Urban Books & Stationery** | David Njoroge (`+254 754 889 001`) | Ruaka, Kiambu | Books & Stationery |
+
+---
+
+## 👥 Kenyan Customer Profiles Dataset (`data/customers.json`)
+
+1. **Wanjiku Kimani** — `+254 711 234 567` (Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi)
+2. **Juma Mwangi** — `+254 723 456 789` (Diamond Plaza Annex, 4th Parklands Avenue, Parklands, Nairobi)
+3. **Faith Chebet** — `+254 734 567 890` (Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi)
+4. **Kevin Otieno** — `+254 745 678 901` (7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi)
+5. **Mercy Achieng** — `+254 756 789 012` (House No. 45, Golden Gate Estate, South B, Nairobi)
+6. **Dennis Mutiso** — `+254 767 890 123` (Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi)
+
+---
+
+## ☁️ Deploying to Vercel
+
+DispatchHub is pre-configured with serverless WSGI routing via `vercel.json` and `api/index.py`.
+
+### Option A: 1-Click GitHub Integration (Recommended)
+1. Go to [https://vercel.com/new](https://vercel.com/new).
+2. Connect your GitHub account and import **`https://github.com/AnnNjeriWangui/DispatchHub`**.
+3. Leave root directory as `./` and framework as **Other**.
+4. Click **Deploy**. Vercel will automatically detect `api/index.py` and `requirements.txt`.
+
+### Option B: Deploy via Vercel CLI
+```bash
+npm install -g vercel
+vercel login
+vercel --prod
+```
 
 ---
 
@@ -65,6 +98,9 @@
 | `GET` | `/dispatcher` | Dispatcher Command Center |
 | `GET` | `/rider` | Rider Portal |
 | `GET` | `/track` | Public Customer Order Tracking |
+| `GET` | `/api/health` | Service health & timestamp |
+| `GET` | `/api/retailers` | List all 5 retailer profiles |
+| `GET` | `/api/customers` | List 6 Kenyan customer profiles |
 | `GET` | `/api/orders` | List & filter delivery orders |
 | `POST` | `/api/orders` | Create new delivery request |
 | `PUT` | `/api/orders/<order_number>` | Edit order details |
@@ -81,17 +117,17 @@
 
 ---
 
-## 🚀 Running Locally & Running Tests
+## 🚀 Running Locally & Testing
 
 ```bash
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Run test suite (All 10 tests)
-pytest -v test_app.py
+# 2. Run automated test suite (All 10 tests)
+python test_app.py
 
-# 3. Start DispatchHub Master Engine
-python3 app.py
+# 3. Start DispatchHub
+python app.py
 ```
 
-Server runs on `http://127.0.0.1:5000`.
+Server runs on: **`http://127.0.0.1:5000`**
