@@ -15,19 +15,33 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
-
-# Helper functions for data storage
 def load_json_file(filename):
-    file_path = os.path.join(DATA_DIR, filename)
-    if not os.path.exists(file_path):
-        return []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"Error loading {filename}: {e}")
-        return []
+    for base in ["/tmp/data", DATA_DIR]:
+        file_path = os.path.join(base, filename)
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error loading {file_path}: {e}")
+    return []
 
+def save_json_file(filename, data):
+    try:
+        file_path = os.path.join(DATA_DIR, filename)
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Failed to save to DATA_DIR, trying /tmp: {e}")
+        try:
+            tmp_dir = "/tmp/data"
+            os.makedirs(tmp_dir, exist_ok=True)
+            file_path = os.path.join(tmp_dir, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as e2:
+            print(f"Also failed to save to /tmp: {e2}")
 def save_json_file(filename, data):
     file_path = os.path.join(DATA_DIR, filename)
     os.makedirs(DATA_DIR, exist_ok=True)
