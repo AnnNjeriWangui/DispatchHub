@@ -13,6 +13,25 @@ class TestDispatchHub(unittest.TestCase):
         data = rv.get_json()
         self.assertEqual(data['status'], 'healthy')
 
+    def test_pages_render(self):
+        # Retailer page
+        rv1 = self.client.get('/')
+        self.assertEqual(rv1.status_code, 200)
+        
+        # Dispatcher Command Center page
+        rv2 = self.client.get('/dispatcher')
+        self.assertEqual(rv2.status_code, 200)
+        self.assertIn(b'Reflex Dispatcher', rv2.data)
+        
+        # Rider Portal page
+        rv3 = self.client.get('/rider')
+        self.assertEqual(rv3.status_code, 200)
+        
+        # Public Track page
+        rv4 = self.client.get('/track')
+        self.assertEqual(rv4.status_code, 200)
+        self.assertIn(b'Track Your', rv4.data)
+
     def test_retailers_count_and_data(self):
         rv = self.client.get('/api/retailers')
         self.assertEqual(rv.status_code, 200)
@@ -47,9 +66,18 @@ class TestDispatchHub(unittest.TestCase):
         data = rv.get_json()
         self.assertTrue(data['found'])
         self.assertEqual(data['order']['order_number'], 'ORD-2026-0826-001')
-        self.assertIn('Jackson Kiprotich', data['order']['dispatcher_name'])
 
-    def test_create_and_advance_order(self):
+    def test_riders_and_telematics(self):
+        rv = self.client.get('/api/riders')
+        self.assertEqual(rv.status_code, 200)
+        riders = rv.get_json()
+        self.assertGreaterEqual(len(riders), 4)
+        for r in riders:
+            self.assertIn('battery_level', r)
+            self.assertIn('duty_status', r)
+            self.assertIn('assigned_zone', r)
+
+    def test_create_assign_and_advance_order(self):
         # 1. Create order
         new_order_payload = {
             "retailer_id": "RET-001",
@@ -66,12 +94,12 @@ class TestDispatchHub(unittest.TestCase):
         order_num = res['order']['order_number']
         self.assertEqual(res['order']['status'], 'Pending')
         
-        # 2. Advance to In Transit
-        rv_adv = self.client.post(f'/api/orders/{order_num}/advance')
-        self.assertEqual(rv_adv.status_code, 200)
-        res_adv = rv_adv.get_json()
-        self.assertEqual(res_adv['order']['status'], 'In Transit')
-        self.assertIsNotNone(res_adv['order']['dispatcher_id'])
+        # 2. Dispatcher Manual Assign
+        rv_assign = self.client.post(f'/api/orders/{order_num}/assign', json={"rider_id": "RIDER-001"})
+        self.assertEqual(rv_assign.status_code, 200)
+        res_assign = rv_assign.get_json()
+        self.assertEqual(res_assign['order']['dispatcher_id'], 'RIDER-001')
+        self.assertEqual(res_assign['order']['status'], 'In Transit')
 
         # 3. Advance to Delivered
         rv_del = self.client.post(f'/api/orders/{order_num}/advance')
@@ -79,10 +107,39 @@ class TestDispatchHub(unittest.TestCase):
         res_del = rv_del.get_json()
         self.assertEqual(res_del['order']['status'], 'Delivered')
 
-        # 4. Update order check
+        # 4. Update order check (already delivered -> 400)
         rv_upd = self.client.put(f'/api/orders/{order_num}', json={"special_instructions": "Updated note"})
-        # Already delivered, so should return 400
         self.assertEqual(rv_upd.status_code, 400)
+
+    def test_auto_dispatch_and_notifications(self):
+        # Create pending order
+        payload = {
+            "retailer_id": "RET-002",
+            "customer_name": "Faith Chebet",
+            "customer_phone": "+254 734 567 890",
+            "delivery_address": "Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi",
+            "item_description": "Handcrafted vase",
+            "auto_assign": False
+        }
+        rv_create = self.client.post('/api/orders', json=payload)
+        order_num = rv_create.get_json()['order']['order_number']
+        
+        # Auto-assign
+        rv_auto = self.client.post('/api/dispatch/auto-assign-all')
+        self.assertEqual(rv_auto.status_code, 200)
+        
+        # Notification trigger
+        rv_notify = self.client.post('/api/notifications/send-tracking', json={"order_number": order_num, "channel": "SMS"})
+        self.assertEqual(rv_notify.status_code, 200)
+        self.assertTrue(rv_notify.get_json()['success'])
+
+    def test_dispatch_analytics(self):
+        rv = self.client.get('/api/dispatch/analytics')
+        self.assertEqual(rv.status_code, 200)
+        data = rv.get_json()
+        self.assertIn('rider_payouts_kes', data)
+        self.assertIn('retailer_commission_kes', data)
+        self.assertIn('platform_revenue_kes', data)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflex Dispatcher Command Center | Real-Time Fleet Logistics</title>
+  <meta name="description" content="Central automated dispatch command hub connecting Kenyan retailers, logistics dispatchers, and electric motorcycle delivery riders in real time.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+              accent: '#3b82f6',
+              amber: '#f59e0b',
+              purple: '#8b5cf6',
+              dark: '#090d16',
+              card: '#111827',
+              border: '#1f2937'
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js CDN for live verification QR rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    
+    .radar-grid {
+      background-size: 30px 30px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+    .radar-sweep {
+      background: conic-gradient(from 0deg at 50% 50%, rgba(16, 185, 129, 0) 0deg, rgba(16, 185, 129, 0.15) 300deg, rgba(16, 185, 129, 0.4) 360deg);
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 p-0.5 shadow-lg shadow-emerald-500/20">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i data-lucide="radio" class="w-5 h-5 text-emerald-400 animate-pulse"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white">Reflex <span class="text-emerald-400">Dispatcher</span></h1>
+            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
+              Automated Hub
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 font-mono">Central Routing & Fleet Orchestration</p>
+        </div>
+      </div>
+
+      <!-- Quick Role Navigation Pill -->
+      <nav class="hidden md:flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+        <a href="/" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">
+          <i data-lucide="store" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>Retailer Portal</span>
+        </a>
+        <a href="/dispatcher" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 shadow-sm transition">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+          <span>Dispatcher Center</span>
+        </a>
+        <a href="/rider" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">
+          <i data-lucide="bike" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Rider Portal</span>
+        </a>
+        <a href="/track" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Customer Tracking</span>
+        </a>
+      </nav>
+
+      <!-- Actions & Live Status -->
+      <div class="flex items-center space-x-3">
+        <!-- Live Polling & Sound Toggle -->
+        <div class="flex items-center space-x-2 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="text-slate-300 font-mono text-[11px] hidden sm:inline" id="liveSyncClock">Syncing Live</span>
+        </div>
+
+        <button id="btnAutoDispatchAll" class="flex items-center space-x-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-xs rounded-lg shadow-lg shadow-emerald-500/25 transition transform active:scale-95">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+          <span>Auto-Assign All</span>
+        </button>
+
+        <button id="btnManualRefresh" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition" title="Refresh Live State">
+          <i data-lucide="refresh-cw" class="w-4 h-4" id="refreshIcon"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- 1: REAL-TIME METRICS & SLA STATUS -->
+    <section class="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+      <!-- Pending Queue -->
+      <div class="glass-panel p-4 rounded-2xl relative overflow-hidden border-amber-500/30 bg-gradient-to-b from-amber-500/10 to-transparent">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">Unassigned Queue</span>
+          <span class="p-1.5 rounded-lg bg-amber-500/20 text-amber-300">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-white font-mono" id="statPendingCount">0</span>
+          <span class="text-xs text-amber-400/80 font-medium">Awaiting Rider</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Priority Urgents: <b class="text-amber-300 font-mono" id="statUrgentCount">0</b></span>
+          <span class="text-emerald-400 flex items-center"><i data-lucide="zap" class="w-3 h-3 mr-0.5"></i> Auto-Queue Active</span>
+        </div>
+      </div>
+
+      <!-- Active In-Transit -->
+      <div class="glass-panel p-4 rounded-2xl relative overflow-hidden border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 to-transparent">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Active In-Transit</span>
+          <span class="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-300">
+            <i data-lucide="navigation" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-white font-mono" id="statTransitCount">0</span>
+          <span class="text-xs text-cyan-400/80 font-medium">On Live Routes</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Avg ETA: <b class="text-cyan-300 font-mono" id="statAvgEta">18 mins</b></span>
+          <span class="text-slate-300">Nairobi City Zones</span>
+        </div>
+      </div>
+
+      <!-- Online Fleet -->
+      <div class="glass-panel p-4 rounded-2xl relative overflow-hidden border-emerald-500/30 bg-gradient-to-b from-emerald-500/10 to-transparent">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Online Fleet</span>
+          <span class="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300">
+            <i data-lucide="bike" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-white font-mono" id="statOnlineRiders">9/9</span>
+          <span class="text-xs text-emerald-400 font-medium">Ready</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>EV Charging: <b class="text-purple-400 font-mono">1 Hub</b></span>
+          <span class="text-emerald-400 font-medium">100% Roam & Spiro</span>
+        </div>
+      </div>
+
+      <!-- Completed Today -->
+      <div class="glass-panel p-4 rounded-2xl relative overflow-hidden border-purple-500/30 bg-gradient-to-b from-purple-500/10 to-transparent">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Delivered Today</span>
+          <span class="p-1.5 rounded-lg bg-purple-500/20 text-purple-300">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-white font-mono" id="statDeliveredCount">0</span>
+          <span class="text-xs text-purple-400/80 font-medium">98.7% SLA</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Total Logged: <b class="text-white font-mono" id="statTotalLogged">0</b></span>
+          <span class="text-purple-300">Fast Handover</span>
+        </div>
+      </div>
+
+      <!-- Financial Reconciliation & Commission -->
+      <div class="glass-panel p-4 rounded-2xl relative overflow-hidden border-blue-500/30 bg-gradient-to-b from-blue-500/10 to-transparent col-span-2 lg:col-span-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">COD & Commissions</span>
+          <span class="p-1.5 rounded-lg bg-blue-500/20 text-blue-300">
+            <i data-lucide="wallet" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-2xl font-extrabold text-white font-mono" id="statCodVolume">KES 0</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Rider Payout: <b class="text-emerald-400 font-mono" id="statRiderPayout">80%</b></span>
+          <span class="text-blue-300">COD Secure</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2: WORKSPACE TABS -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      <div class="flex items-center space-x-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <button id="tabBtnQueue" class="tab-btn active px-4 py-2 rounded-lg text-xs font-bold text-white bg-slate-800 transition flex items-center space-x-2">
+          <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
+          <span>Dispatch Queue (<span id="tabCountQueue">0</span>)</span>
+        </button>
+        <button id="tabBtnFleet" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center space-x-2">
+          <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i>
+          <span>Fleet Roster & Telematics</span>
+        </button>
+        <button id="tabBtnRadar" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center space-x-2">
+          <i data-lucide="radar" class="w-4 h-4 text-amber-400"></i>
+          <span>Live Radar & Zone Matrix</span>
+        </button>
+        <button id="tabBtnVerify" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center space-x-2">
+          <i data-lucide="qr-code" class="w-4 h-4 text-purple-400"></i>
+          <span>QR / Code Confirmation</span>
+        </button>
+        <button id="tabBtnFinancials" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center space-x-2">
+          <i data-lucide="pie-chart" class="w-4 h-4 text-blue-400"></i>
+          <span>SLA & Commission Model</span>
+        </button>
+      </div>
+
+      <!-- Quick Search Bar inside Workspace -->
+      <div class="flex items-center space-x-2 w-full md:w-auto">
+        <div class="relative flex-1 md:w-72">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+          <input type="text" id="globalFilterInput" placeholder="Filter orders, rider, phone, zone..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+        <button id="btnQuickCreateOrder" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 flex items-center space-x-1.5 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>Log Request</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 1: DISPATCH QUEUE MATRIX ================= -->
+    <div id="viewQueue" class="space-y-4">
+      
+      <!-- Filter sub-pills -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+        <div class="flex items-center space-x-2 overflow-x-auto">
+          <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider pl-1">Filter:</span>
+          <button class="status-chip active px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-white border border-slate-700" data-status="ALL">All (<span id="filterCountAll">0</span>)</button>
+          <button class="status-chip px-3 py-1 rounded-lg text-xs font-medium bg-slate-950 text-amber-400 border border-amber-500/20 hover:bg-amber-500/10" data-status="Pending">Pending Assignment (<span id="filterCountPending">0</span>)</button>
+          <button class="status-chip px-3 py-1 rounded-lg text-xs font-medium bg-slate-950 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/10" data-status="In Transit">In Transit (<span id="filterCountTransit">0</span>)</button>
+          <button class="status-chip px-3 py-1 rounded-lg text-xs font-medium bg-slate-950 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/10" data-status="Delivered">Delivered (<span id="filterCountDelivered">0</span>)</button>
+          <button class="status-chip px-3 py-1 rounded-lg text-xs font-medium bg-slate-950 text-rose-400 border border-rose-500/20 hover:bg-rose-500/10" data-status="Cancelled">Cancelled</button>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs text-slate-400">
+          <span class="flex items-center space-x-1">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>Needs Dispatcher Action</span>
+          </span>
+          <span class="flex items-center space-x-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Assigned to Rider</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Orders Table Container -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4">Order / Retailer</th>
+                <th class="py-3.5 px-4">Customer & Destination</th>
+                <th class="py-3.5 px-4">Package & Handling</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4">Assigned Fleet Rider</th>
+                <th class="py-3.5 px-4 text-right">Dispatch Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody" class="divide-y divide-slate-800/60 font-sans">
+              <!-- Rendered Dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="queueEmptyState" class="hidden py-16 text-center">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500 mb-3">
+            <i data-lucide="inbox" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">No delivery orders found</h3>
+          <p class="text-xs text-slate-400 mt-1">Try clearing filters or log a new delivery request from the retailer portal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: FLEET ROSTER & TELEMATICS ================= -->
+    <div id="viewFleet" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+        <div>
+          <h2 class="text-sm font-bold text-white flex items-center space-x-2">
+            <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+            <span>Live EV Motorbike Fleet Telematics & Rider Status</span>
+          </h2>
+          <p class="text-xs text-slate-400">Real-time battery levels, current active deliveries, zone assignments, and duty status.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            9 Fleet Units Connected
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="fleetCardsGrid">
+        <!-- Rendered Dynamically -->
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: LIVE RADAR & ZONE MATRIX ================= -->
+    <div id="viewRadar" class="hidden space-y-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        <!-- Radar Map Mock Visualizer -->
+        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden min-h-[420px] flex flex-col justify-between radar-grid border border-slate-800">
+          
+          <!-- Radar Sweep Ring Overlay -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
+            <div class="w-96 h-96 rounded-full border border-emerald-500/30 flex items-center justify-center animate-ping-slow">
+              <div class="w-64 h-64 rounded-full border border-emerald-500/40 flex items-center justify-center">
+                <div class="w-32 h-32 rounded-full border border-emerald-500/50"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Radar Header -->
+          <div class="relative z-10 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-emerald-400 font-mono flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>NAIROBI METROPOLITAN DISPATCH RADAR</span>
+              </span>
+              <p class="text-xs text-slate-400">Real-time zone density & active delivery nodes</p>
+            </div>
+            <div class="px-2.5 py-1 bg-slate-900/90 rounded-lg border border-slate-700 text-[11px] font-mono text-emerald-400">
+              LAT: -1.2921 | LNG: 36.8219
+            </div>
+          </div>
+
+          <!-- Simulated Zone Nodes on Nairobi Radar -->
+          <div class="relative z-10 grid grid-cols-3 gap-4 py-8">
+            <!-- Westlands -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30 hover:border-emerald-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-emerald-400">Westlands / Parklands</strong>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">Savanna Blooms • 2 Riders Active</p>
+              <div class="mt-2 text-[10px] text-emerald-400 font-mono">Hesbon Otieno • Jackson K.</div>
+            </div>
+
+            <!-- Kilimani -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-cyan-500/30 hover:border-cyan-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-cyan-400">Kilimani / Kileleshwa</strong>
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">High Request Zone • 2 Riders</p>
+              <div class="mt-2 text-[10px] text-cyan-400 font-mono">Faith Wambui • Samuel O.</div>
+            </div>
+
+            <!-- CBD -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/30 hover:border-amber-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-amber-400">Nairobi CBD / Upper Hill</strong>
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">Tech Hub • 2 Riders Active</p>
+              <div class="mt-2 text-[10px] text-amber-400 font-mono">Aminah H. • Peter Kamau</div>
+            </div>
+
+            <!-- Karen / Langata -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-purple-500/30 hover:border-purple-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-purple-400">Karen / Langata</strong>
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">Artisan Crafts • 1 Rider</p>
+              <div class="mt-2 text-[10px] text-purple-400 font-mono">Grace Nduta (Eco-Bike)</div>
+            </div>
+
+            <!-- Industrial Area -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-blue-500/30 hover:border-blue-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-blue-400">Industrial Area / South B</strong>
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">Heavy Cargo Depot • 1 Rider</p>
+              <div class="mt-2 text-[10px] text-blue-400 font-mono">Brian Kipkorir (Roam Air)</div>
+            </div>
+
+            <!-- Thika Road / Ruaka -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-rose-500/30 hover:border-rose-400 transition cursor-pointer group shadow-lg">
+              <div class="flex items-center justify-between mb-1">
+                <strong class="text-xs font-bold text-white group-hover:text-rose-400">Thika Road / Ruaka</strong>
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              </div>
+              <p class="text-[11px] text-slate-400">Urban Books • 1 Courier Van</p>
+              <div class="mt-2 text-[10px] text-rose-400 font-mono">Boniface Maina (Van)</div>
+            </div>
+          </div>
+
+          <!-- Radar Footer Legend -->
+          <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Active Boda</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span><span>Electric Roam</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Courier Van</span></span>
+            </div>
+            <span class="font-mono text-emerald-400 text-[11px]">Dynamic Range: 15km Radius</span>
+          </div>
+        </div>
+
+        <!-- Live Event Activity Stream -->
+        <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-slate-800">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+                <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
+                <span>Live Dispatch Event Stream</span>
+              </h3>
+              <span class="text-[10px] font-mono text-slate-500">Real-time</span>
+            </div>
+            <div class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1" id="liveEventsList">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 text-center">
+            <button id="btnClearEvents" class="text-[11px] text-slate-400 hover:text-slate-200 transition">
+              Clear stream history
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= VIEW 4: QR & CODE CONFIRMATION ================= -->
+    <div id="viewVerify" class="hidden space-y-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        <!-- Code Verification & Scan Simulator -->
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-5">
+          <div>
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Order Handover Confirmation & Scanning</span>
+            </span>
+            <h2 class="text-lg font-bold text-white mt-1">Delivery Confirmation & PIN Verification</h2>
+            <p class="text-xs text-slate-400">Enter order number or scan QR code to verify customer receipt and mark delivery complete.</p>
+          </div>
+
+          <form id="verifyForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Order Number</label>
+              <input type="text" id="verifyOrderInput" placeholder="e.g. ORD-2026-0828-001" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-purple-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Customer Verification 4-Digit PIN / Scan Code</label>
+              <input type="text" id="verifyPinInput" placeholder="e.g. 4819" maxlength="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-purple-500">
+              <p class="text-[11px] text-slate-500 mt-1">Found in customer's SMS tracking notification or on their physical receipt.</p>
+            </div>
+
+            <div class="flex items-center space-x-3 pt-2">
+              <button type="submit" class="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-purple-500/20 transition">
+                <i data-lucide="check" class="w-4 h-4 inline-block mr-1"></i> Verify & Complete Handover
+              </button>
+              <button type="button" id="btnSimulateQrScan" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition">
+                <i data-lucide="camera" class="w-4 h-4 inline-block mr-1"></i> Simulate QR Scan
+              </button>
+            </div>
+          </form>
+
+          <!-- Verification Result Banner -->
+          <div id="verifyResultBanner" class="hidden p-4 rounded-xl border">
+            <!-- Dynamic Result -->
+          </div>
+        </div>
+
+        <!-- Customer SMS / WhatsApp Notification Simulator -->
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-5">
+          <div>
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="message-square" class="w-4 h-4"></i>
+              <span>Customer Notification Engine</span>
+            </span>
+            <h2 class="text-lg font-bold text-white mt-1">Send Tracking & Payment Link to Customer</h2>
+            <p class="text-xs text-slate-400">Trigger live SMS / WhatsApp alerts with order tracking URL, assigned rider contact, and COD total.</p>
+          </div>
+
+          <form id="smsNotifyForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Target Order</label>
+              <select id="notifyOrderSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Notification Channel</label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center space-x-2 p-2.5 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500">
+                  <input type="radio" name="notifyChannel" value="SMS" checked class="text-emerald-500 focus:ring-0">
+                  <span class="text-xs font-medium text-white"><i data-lucide="smartphone" class="w-3.5 h-3.5 inline mr-1 text-emerald-400"></i> SMS (Kenya)</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2.5 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500">
+                  <input type="radio" name="notifyChannel" value="WhatsApp" class="text-emerald-500 focus:ring-0">
+                  <span class="text-xs font-medium text-white"><i data-lucide="message-circle" class="w-3.5 h-3.5 inline mr-1 text-emerald-400"></i> WhatsApp</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1">
+              <span class="text-[10px] uppercase font-bold text-slate-500">Message Preview</span>
+              <p id="smsPreviewText" class="text-slate-300 italic">Select an order above to preview the notification.</p>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition">
+              <i data-lucide="send" class="w-4 h-4 inline-block mr-1"></i> Send Customer Notification
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= VIEW 5: FINANCIALS & COMMISSION MODEL ================= -->
+    <div id="viewFinancials" class="hidden space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Retailer Commission -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Retailer Model</span>
+            <i data-lucide="store" class="w-4 h-4 text-rose-400"></i>
+          </div>
+          <h3 class="text-2xl font-extrabold text-white font-mono" id="finRetailerCom">KES 1,250</h3>
+          <p class="text-xs text-slate-400">5% subscription commission on completed merchandise value.</p>
+          <div class="pt-2 text-[11px] text-emerald-400 font-semibold">✓ Automated billing on delivery</div>
+        </div>
+
+        <!-- Rider Earnings -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Rider Payout</span>
+            <i data-lucide="bike" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <h3 class="text-2xl font-extrabold text-white font-mono" id="finRiderPayout">KES 2,400</h3>
+          <p class="text-xs text-slate-400">80% of delivery fee straight to rider M-Pesa account.</p>
+          <div class="pt-2 text-[11px] text-cyan-400 font-semibold">✓ Instant per-drop settlement</div>
+        </div>
+
+        <!-- Platform Margin -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Reflex Platform Revenue</span>
+            <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <h3 class="text-2xl font-extrabold text-white font-mono" id="finPlatformRev">KES 1,850</h3>
+          <p class="text-xs text-slate-400">Dispatch engine fee + 20% logistics brokerage.</p>
+          <div class="pt-2 text-[11px] text-purple-400 font-semibold">✓ Zero cash leakages</div>
+        </div>
+
+      </div>
+
+      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+        <h3 class="text-sm font-bold text-white mb-2">Three-Way Trust Architecture</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Reflex Logistics solves trust between Retailers, Customers, and Riders. Retailers track orders in real-time without dispatch overhead, Riders receive fair per-drop remuneration with battery swap hub integration, and Customers enjoy Cash on Delivery (COD) inclusive of delivery fees with live tracking.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: MANUAL RIDER ASSIGNMENT ================= -->
+  <div id="modalAssignRider" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
+            <span>Assign Rider to Order <span id="modalAssignOrderNum" class="font-mono text-emerald-400">ORD-000</span></span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5" id="modalAssignOrderDest">Destination: Kilimani</p>
+        </div>
+        <button id="btnCloseAssignModal" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 max-h-[420px] overflow-y-auto" id="assignRiderList">
+        <!-- Rendered Dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ORDER DETAILS & QR WAYBILL ================= -->
+  <div id="modalWaybill" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-white">Delivery Waybill & QR Code</h3>
+          <p class="text-xs text-slate-400" id="waybillOrderNum">ORD-000</p>
+        </div>
+        <button id="btnCloseWaybillModal" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 text-center space-y-4">
+        <!-- QR Code Container -->
+        <div class="bg-white p-4 rounded-2xl inline-block shadow-inner mx-auto" id="qrcodeContainer"></div>
+
+        <div class="space-y-1">
+          <div class="text-xs text-slate-400">Customer Verification PIN</div>
+          <div class="text-2xl font-extrabold text-emerald-400 font-mono tracking-widest" id="waybillPinCode">8492</div>
+        </div>
+
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-left text-xs space-y-2">
+          <div class="flex justify-between"><span class="text-slate-400">Customer:</span><strong class="text-white" id="waybillCustomer">Wanjiku Kimani</strong></div>
+          <div class="flex justify-between"><span class="text-slate-400">Destination:</span><strong class="text-white" id="waybillAddress">Kilimani, Nairobi</strong></div>
+          <div class="flex justify-between"><span class="text-slate-400">Package:</span><strong class="text-white" id="waybillItem">Rose Bouquet</strong></div>
+          <div class="flex justify-between"><span class="text-slate-400">Assigned Rider:</span><strong class="text-emerald-400" id="waybillRider">Hesbon Otieno</strong></div>
+          <div class="flex justify-between border-t border-slate-800 pt-1.5"><span class="text-slate-400">Payment:</span><strong class="text-amber-400" id="waybillCod">KES 2,800 (COD)</strong></div>
+        </div>
+
+        <button onclick="window.print()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition">
+          <i data-lucide="printer" class="w-3.5 h-3.5 inline mr-1"></i> Print Waybill Slip
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+    <div class="bg-slate-900 border border-emerald-500/40 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 max-w-sm">
+      <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+        <i data-lucide="check" class="w-4 h-4"></i>
+      </div>
+      <div class="flex-1">
+        <h4 class="text-xs font-bold text-white" id="toastTitle">Success</h4>
+        <p class="text-[11px] text-slate-300" id="toastBody">Order updated successfully.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dispatcher Core JS Logic -->
+  <script src="/static/js/dispatcher.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

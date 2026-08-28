@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflex Express | Live Customer Order Tracking & Delivery Status</title>
+  <meta name="description" content="Track your Kenyan retail package delivery in real-time. View assigned rider contacts, live ETA, payment receipt, and delivery QR verification code.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-slate-950 antialiased flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i data-lucide="package" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+        </div>
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">Reflex <span class="text-emerald-400">Track</span></span>
+          <span class="text-[10px] text-slate-400 block -mt-1 font-mono">Public Delivery Tracking</span>
+        </div>
+      </a>
+
+      <!-- Quick Role Switcher -->
+      <div class="flex items-center space-x-2 text-xs">
+        <a href="/" class="px-2.5 py-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">🏪 Retailer</a>
+        <a href="/dispatcher" class="px-2.5 py-1 text-emerald-400 hover:text-emerald-300 font-semibold bg-emerald-500/10 border border-emerald-500/20 rounded-lg transition">🎯 Dispatcher Hub</a>
+        <a href="/rider" class="px-2.5 py-1 text-cyan-400 hover:text-cyan-300 rounded-lg hover:bg-slate-800 transition">⚡ Rider</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+    
+    <!-- Search Banner -->
+    <div class="text-center space-y-3">
+      <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full inline-block">
+        Real-Time Logistics
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        Track Your <span class="text-emerald-400">Delivery</span> in Real Time
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+        Enter your order tracking number to view real-time rider location, delivery ETA, and payment receipt.
+      </p>
+
+      <!-- Order Lookup Input -->
+      <form id="trackSearchForm" class="max-w-md mx-auto pt-2 flex items-center space-x-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          <input 
+            type="text" 
+            id="trackInput" 
+            placeholder="e.g. ORD-2026-0828-001" 
+            required
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition shadow-lg"
+          >
+        </div>
+        <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20 active:scale-95">
+          Track
+        </button>
+      </form>
+
+      <!-- Quick sample lookups -->
+      <div class="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-xs text-slate-400">
+        <span>Try Sample Orders:</span>
+        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0828-001">ORD-2026-0828-001</button>
+        <span>•</span>
+        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0828-002">ORD-2026-0828-002</button>
+        <span>•</span>
+        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0826-004">ORD-2026-0826-004</button>
+      </div>
+    </div>
+
+    <!-- Live Order Card Result -->
+    <div id="trackResultContainer" class="hidden space-y-6">
+      
+      <!-- Order Header Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-base font-bold text-white font-mono" id="dispOrderNum">ORD-2026-0828-001</h2>
+              <span id="dispStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">In Transit</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5" id="dispOrderDate">Logged today at 10:15 AM</p>
+          </div>
+
+          <div class="text-right">
+            <div class="text-xs text-slate-400">Estimated Delivery:</div>
+            <div class="text-sm font-extrabold text-emerald-400 font-mono" id="dispEta">~18 mins</div>
+          </div>
+        </div>
+
+        <!-- 4-Step Interactive Timeline -->
+        <div class="py-4">
+          <div class="relative flex items-center justify-between">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-800 z-0"></div>
+            <div id="progLine" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-emerald-500 z-0 transition-all duration-500" style="width: 66%;"></div>
+
+            <!-- Step 1: Placed -->
+            <div class="relative z-10 text-center flex flex-col items-center">
+              <div id="stepDot1" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </div>
+              <span class="text-[11px] font-bold text-slate-200 mt-1.5">Order Placed</span>
+            </div>
+
+            <!-- Step 2: Assigned -->
+            <div class="relative z-10 text-center flex flex-col items-center">
+              <div id="stepDot2" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+              </div>
+              <span class="text-[11px] font-bold text-slate-200 mt-1.5">Rider Assigned</span>
+            </div>
+
+            <!-- Step 3: In Transit -->
+            <div class="relative z-10 text-center flex flex-col items-center">
+              <div id="stepDot3" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40 animate-pulse">
+                <i data-lucide="bike" class="w-4 h-4"></i>
+              </div>
+              <span class="text-[11px] font-bold text-emerald-400 mt-1.5">In Transit</span>
+            </div>
+
+            <!-- Step 4: Delivered -->
+            <div class="relative z-10 text-center flex flex-col items-center">
+              <div id="stepDot4" class="w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700">
+                <i data-lucide="package-check" class="w-4 h-4"></i>
+              </div>
+              <span class="text-[11px] font-medium text-slate-400 mt-1.5">Delivered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Rider Info & QR Handover PIN -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Assigned Rider Profile -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+            <i data-lucide="bike" class="w-4 h-4 text-emerald-400"></i>
+            <span>Your Delivery Rider</span>
+          </span>
+
+          <div class="flex items-center space-x-3 pt-1">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base font-extrabold border border-emerald-500/30" id="dispRiderAvatar">
+              HO
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-sm" id="dispRiderName">Hesbon Otieno</h3>
+              <p class="text-xs text-slate-400" id="dispVehicle">Electric Roam Motorbike • KME 102G</p>
+              <div class="text-[11px] text-amber-400 font-semibold mt-0.5">⭐ 4.9 Rating (412 Deliveries)</div>
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center space-x-2">
+            <a id="btnCallDriver" href="tel:+254712345678" class="flex-1 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 font-bold text-xs rounded-xl border border-emerald-500/30 flex items-center justify-center space-x-1.5 transition">
+              <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+              <span>Call Rider</span>
+            </a>
+            <a id="btnSmsDriver" href="sms:+254712345678" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 flex items-center justify-center space-x-1.5 transition">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Send SMS</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Handover PIN & QR Confirmation -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-purple-400"></i>
+              <span>Customer Verification Code</span>
+            </span>
+            <p class="text-xs text-slate-400 mt-1">Provide this 4-digit code or show the QR code to your rider upon delivery.</p>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <div>
+              <span class="text-[10px] text-slate-500 uppercase font-mono">Handover PIN</span>
+              <div class="text-2xl font-extrabold text-emerald-400 font-mono tracking-widest" id="dispHandoffPin">4819</div>
+            </div>
+            <div id="dispCustomerQr" class="bg-white p-1 rounded-lg"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Receipt & Package Details -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+          <i data-lucide="receipt" class="w-4 h-4 text-blue-400"></i>
+          <span>Package & Payment Breakdown</span>
+        </span>
+
+        <div class="divide-y divide-slate-800 text-xs">
+          <div class="py-2.5 flex justify-between">
+            <span class="text-slate-400">Recipient Name:</span>
+            <strong class="text-white" id="dispCustName">Wanjiku Kimani</strong>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-slate-400">Delivery Address:</span>
+            <strong class="text-white text-right max-w-xs" id="dispCustAddress">Apartment 4B, Kilimani, Nairobi</strong>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-slate-400">Item Description:</span>
+            <strong class="text-slate-200" id="dispItemDesc">Luxury white rose bouquet with glass vase</strong>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-slate-400">Item Value:</span>
+            <span class="font-mono text-slate-200" id="dispItemVal">KES 2,500</span>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-slate-400">Delivery Fee (Express):</span>
+            <span class="font-mono text-slate-200" id="dispDeliveryFee">KES 300</span>
+          </div>
+          <div class="py-3 flex justify-between items-center text-sm font-bold bg-slate-950/80 -mx-5 px-5 mt-2 rounded-b-xl border-t border-slate-800">
+            <span class="text-white">Cash on Delivery Total:</span>
+            <span class="text-emerald-400 font-mono text-base font-extrabold" id="dispTotalCod">KES 2,800</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="alert('Support request logged. A customer agent will call you within 5 minutes.');" class="text-xs text-rose-400 hover:underline">
+            <i data-lucide="help-circle" class="w-3.5 h-3.5 inline mr-1"></i> Report Issue / Return Request
+          </button>
+          <button onclick="window.print()" class="text-xs text-slate-400 hover:text-slate-200 transition">
+            <i data-lucide="printer" class="w-3.5 h-3.5 inline mr-1"></i> Print Receipt
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Error / Not Found Message -->
+    <div id="trackNotFound" class="hidden bg-slate-900/60 border border-slate-800 rounded-2xl p-8 text-center space-y-3">
+      <div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+      </div>
+      <h3 class="text-sm font-bold text-white">Order Not Found</h3>
+      <p class="text-xs text-slate-400 max-w-sm mx-auto">Please check your tracking number format (e.g. ORD-2026-0828-001) or contact your retailer for assistance.</p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-4xl mx-auto px-4">
+      Reflex Logistics OS • Fast, Trusted Kenyan Last-Mile Delivery Network • Westlands, Kilimani, CBD
+    </div>
+  </footer>
+
+  <!-- Track Script -->
+  <script>
+    async function loadOrder(orderNum) {
+      if (!orderNum) return;
+      try {
+        const res = await fetch(`/api/orders/search?order_number=${encodeURIComponent(orderNum)}`);
+        const data = await res.json();
+        
+        if (res.ok && data.found) {
+          renderOrder(data.order);
+        } else {
+          document.getElementById('trackResultContainer').classList.add('hidden');
+          document.getElementById('trackNotFound').classList.remove('hidden');
+        }
+      } catch (e) {
+        document.getElementById('trackResultContainer').classList.add('hidden');
+        document.getElementById('trackNotFound').classList.remove('hidden');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderOrder(order) {
+      document.getElementById('trackNotFound').classList.add('hidden');
+      document.getElementById('trackResultContainer').classList.remove('hidden');
+      
+      document.getElementById('dispOrderNum').textContent = order.order_number;
+      document.getElementById('dispStatusBadge').textContent = order.status;
+      document.getElementById('dispOrderDate').textContent = `Logged: ${new Date(order.created_at || Date.now()).toLocaleTimeString('en-GB')}`;
+      document.getElementById('dispEta').textContent = order.status === 'Delivered' ? 'Completed' : `~${order.eta_minutes || 20} mins`;
+      
+      // Update Progress Bar
+      const progLine = document.getElementById('progLine');
+      const s1 = document.getElementById('stepDot1');
+      const s2 = document.getElementById('stepDot2');
+      const s3 = document.getElementById('stepDot3');
+      const s4 = document.getElementById('stepDot4');
+      
+      if (order.status === 'Pending') {
+        progLine.style.width = '10%';
+        s2.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+        s3.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+      } else if (order.status === 'Assigned') {
+        progLine.style.width = '33%';
+        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+        s3.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+      } else if (order.status === 'In Transit' || order.status === 'Picked Up') {
+        progLine.style.width = '66%';
+        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+        s3.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg animate-pulse';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+      } else if (order.status === 'Delivered') {
+        progLine.style.width = '100%';
+        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+        s3.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+        s4.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+      }
+      
+      // Rider
+      document.getElementById('dispRiderName').textContent = order.dispatcher_name || 'Pending assignment';
+      document.getElementById('dispVehicle').textContent = `${order.vehicle_type || 'Electric Boda'} • ${order.vehicle_reg || 'KME 102G'}`;
+      document.getElementById('btnCallDriver').href = `tel:${order.driver_phone || '+254712345678'}`;
+      document.getElementById('btnSmsDriver').href = `sms:${order.driver_phone || '+254712345678'}`;
+      
+      // PIN & QR
+      const pin = order.verification_code || '4819';
+      document.getElementById('dispHandoffPin').textContent = pin;
+      
+      const qrEl = document.getElementById('dispCustomerQr');
+      qrEl.innerHTML = '';
+      if (window.QRCode) {
+        new QRCode(qrEl, {
+          text: `REFLEX_VERIFY:${order.order_number}:${pin}`,
+          width: 60,
+          height: 60,
+          colorDark: "#090d16",
+          colorLight: "#ffffff"
+        });
+      }
+
+      // Details
+      document.getElementById('dispCustName').textContent = order.customer_name;
+      document.getElementById('dispCustAddress').textContent = order.delivery_address;
+      document.getElementById('dispItemDesc').textContent = order.item_description;
+      document.getElementById('dispItemVal').textContent = `KES ${(order.item_value || 2500).toLocaleString()}`;
+      document.getElementById('dispDeliveryFee').textContent = `KES ${(order.delivery_fee || 300).toLocaleString()}`;
+      document.getElementById('dispTotalCod').textContent = `KES ${(order.cod_amount || 2800).toLocaleString()}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      
+      // Check query params
+      const params = new URLSearchParams(window.location.search);
+      const initialOrd = params.get('ord') || params.get('order');
+      if (initialOrd) {
+        document.getElementById('trackInput').value = initialOrd;
+        loadOrder(initialOrd);
+      } else {
+        loadOrder('ORD-2026-0828-001');
+      }
+
+      document.getElementById('trackSearchForm').onsubmit = (e) => {
+        e.preventDefault();
+        const q = document.getElementById('trackInput').value.trim();
+        loadOrder(q);
+      };
+
+      document.querySelectorAll('.sample-chip').forEach(chip => {
+        chip.onclick = () => {
+          document.getElementById('trackInput').value = chip.dataset.ord;
+          loadOrder(chip.dataset.ord);
+        };
+      });
+    });
+  </script>
+</body>
+</html>
