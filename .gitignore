@@ -9,3 +9,6 @@ venv/
 *.log
 node_modules/
 dist/
+DEMO_SLIDES.md
+*presentation*
+*demo*

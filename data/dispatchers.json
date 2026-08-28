@@ -1,13 +1,73 @@
 [
   {
+    "id": "RIDER-001",
+    "name": "Hesbon Otieno",
+    "phone": "+254 712 345 678",
+    "vehicle_type": "Electric Motorbike (Roam Air)",
+    "vehicle_reg": "KME 102G",
+    "status": "Available",
+    "duty_status": "ONLINE",
+    "rating": 4.9,
+    "battery_level": 88,
+    "assigned_zone": "Westlands / Parklands",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 412
+  },
+  {
+    "id": "RIDER-002",
+    "name": "Faith Wambui",
+    "phone": "+254 722 987 654",
+    "vehicle_type": "Electric Motorbike (Spiro Commuter)",
+    "vehicle_reg": "KME 340G",
+    "status": "Available",
+    "duty_status": "ONLINE",
+    "rating": 4.95,
+    "battery_level": 74,
+    "assigned_zone": "Kilimani / Kileleshwa",
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 538
+  },
+  {
+    "id": "RIDER-003",
+    "name": "Aminah Hassan",
+    "phone": "+254 733 456 789",
+    "vehicle_type": "Electric Motorbike (Ampersand e-Boda)",
+    "vehicle_reg": "KME 512G",
+    "status": "Available",
+    "duty_status": "ONLINE",
+    "rating": 4.88,
+    "battery_level": 92,
+    "assigned_zone": "Nairobi CBD / Upper Hill",
+    "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 389
+  },
+  {
+    "id": "RIDER-004",
+    "name": "Brian Kipkorir",
+    "phone": "+254 701 234 567",
+    "vehicle_type": "Electric Motorbike (Roam Air)",
+    "vehicle_reg": "KME 889G",
+    "status": "Available",
+    "duty_status": "ONLINE",
+    "rating": 4.78,
+    "battery_level": 65,
+    "assigned_zone": "Industrial Area / South B",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 295
+  },
+  {
     "id": "DISP-001",
     "name": "Jackson Kiprotich",
     "phone": "+254 701 112 233",
     "vehicle_type": "Boda Boda Motorcycle (Box-Equipped)",
     "vehicle_reg": "KMD 492T",
     "status": "Available",
+    "duty_status": "ONLINE",
     "rating": 4.9,
-    "assigned_zone": "Westlands / Parklands"
+    "battery_level": 95,
+    "assigned_zone": "Westlands / Parklands",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 480
   },
   {
     "id": "DISP-002",
@@ -16,8 +76,12 @@
     "vehicle_type": "Refrigerated Delivery Van",
     "vehicle_reg": "KDG 810Z",
     "status": "Available",
+    "duty_status": "ONLINE",
     "rating": 4.8,
-    "assigned_zone": "Lavington / Kileleshwa"
+    "battery_level": 82,
+    "assigned_zone": "Lavington / Kileleshwa",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 310
   },
   {
     "id": "DISP-003",
@@ -26,8 +90,12 @@
     "vehicle_type": "Cargo TukTuk Express",
     "vehicle_reg": "KTK 123X",
     "status": "Available",
+    "duty_status": "ONLINE",
     "rating": 4.95,
-    "assigned_zone": "Nairobi CBD / Upper Hill"
+    "battery_level": 90,
+    "assigned_zone": "Nairobi CBD / Upper Hill",
+    "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 620
   },
   {
     "id": "DISP-004",
@@ -36,8 +104,12 @@
     "vehicle_type": "Electric Eco-Bike (Insulated Bag)",
     "vehicle_reg": "KEB 904A",
     "status": "Available",
+    "duty_status": "ONLINE",
     "rating": 4.85,
-    "assigned_zone": "Karen / Langata"
+    "battery_level": 86,
+    "assigned_zone": "Karen / Langata",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 350
   },
   {
     "id": "DISP-005",
@@ -46,7 +118,11 @@
     "vehicle_type": "Courier Van (High-Security)",
     "vehicle_reg": "KCJ 554B",
     "status": "Available",
+    "duty_status": "ONLINE",
     "rating": 4.9,
-    "assigned_zone": "Thika Road / Kiambu / Ruaka"
+    "battery_level": 78,
+    "assigned_zone": "Thika Road / Kiambu / Ruaka",
+    "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+    "completed_deliveries": 515
   }
 ]
