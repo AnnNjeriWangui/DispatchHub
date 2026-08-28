@@ -52,5 +52,50 @@
     "delivery_address": "Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi",
     "city": "Nairobi",
     "neighborhood": "Garden City / Roysambu"
+  },
+  {
+    "id": "CUST-007",
+    "name": "Amara Njoroge",
+    "phone": "+254 778 001 234",
+    "email": "amara.njoroge@example.co.ke",
+    "delivery_address": "Flat 7A, Lavington Green Apartments, James Gichuru Road, Lavington, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Lavington"
+  },
+  {
+    "id": "CUST-008",
+    "name": "Silas Kiprop",
+    "phone": "+254 789 112 345",
+    "email": "silas.kiprop@example.co.ke",
+    "delivery_address": "House 22, Milimani Estate, Kisumu-Nairobi Highway, Kisumu",
+    "city": "Kisumu",
+    "neighborhood": "Milimani"
+  },
+  {
+    "id": "CUST-009",
+    "name": "Zara Abdi",
+    "phone": "+254 790 223 456",
+    "email": "zara.abdi@example.co.ke",
+    "delivery_address": "Apt 3C, Tudor Court, Nyali Road, Nyali, Mombasa",
+    "city": "Mombasa",
+    "neighborhood": "Nyali"
+  },
+  {
+    "id": "CUST-010",
+    "name": "Linet Wanjiru",
+    "phone": "+254 701 334 567",
+    "email": "linet.wanjiru@example.co.ke",
+    "delivery_address": "Plot 18, Runda Mimosa, Runda Estate, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Runda"
+  },
+  {
+    "id": "CUST-011",
+    "name": "Omar Sheikh",
+    "phone": "+254 712 445 678",
+    "email": "omar.sheikh@example.co.ke",
+    "delivery_address": "Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD",
+    "city": "Nairobi",
+    "neighborhood": "Nairobi CBD"
   }
 ]

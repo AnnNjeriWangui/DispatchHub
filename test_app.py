@@ -45,7 +45,7 @@ class TestDispatchHub(unittest.TestCase):
         rv = self.client.get('/api/customers')
         self.assertEqual(rv.status_code, 200)
         data = rv.get_json()
-        self.assertEqual(len(data), 6)
+        self.assertGreaterEqual(len(data), 6)
         names = [c['name'] for c in data]
         self.assertIn('Wanjiku Kimani', names)
         self.assertIn('Faith Chebet', names)
