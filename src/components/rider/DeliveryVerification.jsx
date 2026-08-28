@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { QrCode, Key, CheckCircle, Sparkles, ShieldCheck, AlertCircle } from 'lucide-react';
+import { QrCode, Key, CheckCircle, Sparkles, ShieldCheck, AlertCircle, Camera, Delete } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
 import riderService from '../../services/riderService.js';
 
 export default function DeliveryVerification({ order, initialTab = 'qr', onVerified, onClose }) {
@@ -8,6 +9,7 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
   const [manualQrInput, setManualQrInput] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [cameraError, setCameraError] = useState(false);
   const [verifiedSuccess, setVerifiedSuccess] = useState(null);
   const [mpesaModal, setMpesaModal] = useState(null);
 
@@ -18,6 +20,56 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
       if (el) el.focus();
     }
   }, [activeTab]);
+
+  // Camera initialization for QR Code Scanner
+  useEffect(() => {
+    let html5QrCode = null;
+    let isStopped = false;
+
+    if (activeTab === 'qr' && !verifiedSuccess) {
+      const qrRegionId = 'qr-reader';
+      const element = document.getElementById(qrRegionId);
+
+      if (element) {
+        try {
+          html5QrCode = new Html5Qrcode(qrRegionId);
+          const config = { fps: 10, qrbox: { width: 200, height: 200 } };
+
+          html5QrCode
+            .start(
+              { facingMode: 'environment' },
+              config,
+              (decodedText) => {
+                if (!isStopped) {
+                  isStopped = true;
+                  if (html5QrCode && html5QrCode.isScanning) {
+                    html5QrCode.stop().catch(() => {});
+                  }
+                  completeVerification('QR_SCAN', decodedText);
+                }
+              },
+              () => {
+                // Ignore scanning frames failure
+              }
+            )
+            .catch((err) => {
+              console.warn('[QR Camera Error]', err);
+              setCameraError(true);
+            });
+        } catch (e) {
+          console.warn('[QR Init Exception]', e);
+          setCameraError(true);
+        }
+      }
+    }
+
+    return () => {
+      isStopped = true;
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+      }
+    };
+  }, [activeTab, verifiedSuccess]);
 
   if (!order) return null;
 
@@ -37,6 +89,39 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
     if (e.key === 'Backspace' && !codeDigits[idx] && idx > 0) {
       const prevEl = document.getElementById(`code-${idx - 1}`);
       if (prevEl) prevEl.focus();
+    }
+  };
+
+  // Keypad click for number entry
+  const handleKeypadPress = (num) => {
+    if (num === 'back') {
+      const lastFilledIdx = codeDigits.findLastIndex(d => d !== '');
+      if (lastFilledIdx >= 0) {
+        const updated = [...codeDigits];
+        updated[lastFilledIdx] = '';
+        setCodeDigits(updated);
+        const el = document.getElementById(`code-${lastFilledIdx}`);
+        if (el) el.focus();
+      }
+      return;
+    }
+
+    if (num === 'clear') {
+      setCodeDigits(['', '', '', '', '', '']);
+      const el = document.getElementById('code-0');
+      if (el) el.focus();
+      return;
+    }
+
+    const firstEmptyIdx = codeDigits.findIndex(d => d === '');
+    if (firstEmptyIdx !== -1) {
+      const updated = [...codeDigits];
+      updated[firstEmptyIdx] = String(num);
+      setCodeDigits(updated);
+      if (firstEmptyIdx < 5) {
+        const nextEl = document.getElementById(`code-${firstEmptyIdx + 1}`);
+        if (nextEl) nextEl.focus();
+      }
     }
   };
 
@@ -84,7 +169,7 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
   const handleCodeSubmit = (e) => {
     if (e) e.preventDefault();
     const enteredCode = codeDigits.join('');
-    
+
     if (enteredCode.length < 4) {
       setErrorMsg('Please enter the 6-digit delivery confirmation code.');
       return;
@@ -106,12 +191,12 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 relative overflow-hidden space-y-4">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 relative overflow-hidden space-y-4 max-h-[92vh] overflow-y-auto">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-bold text-lg"
         >
           ✕
         </button>
@@ -146,7 +231,7 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
                 Verified: Order #{verifiedSuccess.orderNumber}
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 font-semibold mt-1">
-                Customer: {verifiedSuccess.customerName}
+                Purchaser: {verifiedSuccess.customerName}
               </p>
               <div className="mt-3 bg-emerald-50 dark:bg-emerald-950/60 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 text-xs font-bold text-emerald-800 dark:text-emerald-300">
                 🎉 Delivery Confirmed! KES {verifiedSuccess.earnings} earned
@@ -179,40 +264,49 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
               <button
                 type="button"
                 onClick={() => setActiveTab('qr')}
-                className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'qr'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                 }`}
               >
                 <QrCode className="w-4 h-4" />
-                <span>QR Code Scan</span>
+                <span>Scan Purchaser QR</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('code')}
-                className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'code'
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
                 }`}
               >
                 <Key className="w-4 h-4" />
-                <span>Enter 6-Digit Code</span>
+                <span>Enter Code</span>
               </button>
             </div>
 
-            {/* TAB A: QR CODE SCANNER */}
+            {/* TAB A: QR CODE SCANNER WITH LIVE CAMERA VIEW FINDER */}
             {activeTab === 'qr' && (
               <div className="space-y-4 text-center">
-                <div className="bg-slate-900 text-white p-6 rounded-2xl border-2 border-emerald-500/60 space-y-3 shadow-inner">
-                  <div className="w-24 h-24 border-2 border-dashed border-emerald-400 rounded-xl mx-auto flex items-center justify-center bg-slate-800/80">
-                    <QrCode className="w-12 h-12 text-emerald-400 animate-pulse" />
-                  </div>
-                  <p className="text-xs text-slate-300">
-                    Align customer's delivery QR code inside viewfinder box
-                  </p>
+                
+                {/* Live Camera Viewfinder Container */}
+                <div className="bg-slate-900 text-white p-4 rounded-2xl border-2 border-emerald-500/60 space-y-3 shadow-inner relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center">
+                  <div id="qr-reader" className="w-full max-w-[260px] rounded-xl overflow-hidden" />
+
+                  {cameraError && (
+                    <div className="space-y-2 text-center py-2 px-3">
+                      <Camera className="w-10 h-10 text-amber-400 mx-auto" />
+                      <p className="text-xs text-slate-300 font-medium">
+                        Camera streaming initialized or awaiting video permission.
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        Point camera at purchaser's QR code or click simulate scan below.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -220,7 +314,7 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
                     type="button"
                     onClick={handleSimulateQrScan}
                     disabled={verifying}
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2"
                   >
                     <QrCode className="w-4 h-4" />
                     <span>{verifying ? 'Verifying QR...' : 'Scan Purchaser QR Code'}</span>
@@ -229,37 +323,78 @@ export default function DeliveryVerification({ order, initialTab = 'qr', onVerif
               </div>
             )}
 
-            {/* TAB B: 6-DIGIT CODE ENTRY */}
+            {/* TAB B: 6-DIGIT CODE ENTRY WITH NATIVE & ON-SCREEN KEYPAD */}
             {activeTab === 'code' && (
               <form onSubmit={handleCodeSubmit} className="space-y-4 text-center">
                 <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
-                    Ask purchaser <span className="font-semibold text-slate-900 dark:text-white">{order.customerName}</span> for 6-digit code:
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                    Ask purchaser for 6-digit delivery code:
                   </p>
                 </div>
 
-                {/* 6 Auto-Advancing Digit Boxes */}
-                <div className="flex justify-center gap-1.5 my-3">
+                {/* 6 Auto-Advancing Digit Input Boxes (Triggers Native Keypad) */}
+                <div className="flex justify-center gap-1.5 my-2">
                   {codeDigits.map((digit, idx) => (
                     <input
                       key={idx}
                       id={`code-${idx}`}
-                      type="text"
+                      type="tel"
                       inputMode="numeric"
+                      pattern="[0-9]*"
                       maxLength={1}
                       value={digit}
                       onChange={(e) => handleDigitChange(idx, e.target.value)}
                       onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                       placeholder="•"
-                      className="w-11 h-14 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 focus:border-blue-500 rounded-xl text-center text-xl font-black text-blue-600 dark:text-blue-400 focus:outline-none transition-all"
+                      className="w-11 h-14 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 focus:border-blue-500 rounded-xl text-center text-xl font-black text-blue-600 dark:text-blue-400 focus:outline-none transition-all shadow-sm"
                     />
                   ))}
+                </div>
+
+                {/* Interactive On-Screen Touch Keypad */}
+                <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    Touch Keypad Entry
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => handleKeypadPress(num)}
+                        className="py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm"
+                      >
+                        {num}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('clear')}
+                      className="py-2.5 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-300 active:scale-95 transition-all"
+                    >
+                      Clear
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress(0)}
+                      className="py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm"
+                    >
+                      0
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('back')}
+                      className="py-2.5 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 hover:bg-slate-300 active:scale-95 transition-all flex items-center justify-center"
+                    >
+                      ⌫
+                    </button>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={verifying}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2"
                 >
                   <Key className="w-4 h-4" />
                   <span>{verifying ? 'Verifying Code...' : 'Verify Delivery Code'}</span>

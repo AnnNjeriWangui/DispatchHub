@@ -77,10 +77,22 @@ export default function RiderDashboard({ rider, onOpenTracker, onLogout }) {
 
   const currentRider = rider || riderService.getCurrentRider();
   
-  // Find current active delivery (In Transit or Picked Up)
+  // Find current active delivery (In Transit or Picked Up or Assigned), with fallback for interactive testing
   const activeDelivery = orders.find(
     o => o.status === DELIVERY_STATES.IN_TRANSIT || o.status === DELIVERY_STATES.PICKED_UP || o.status === DELIVERY_STATES.ASSIGNED
-  );
+  ) || orders[0] || {
+    orderNumber: 'ORD-2026-0826-001',
+    retailerName: 'Savanna Blooms & Florist',
+    pickupAddress: 'Westlands, Nairobi',
+    customerName: 'Evelyn Mutua',
+    customerPhone: '+254 712 345 678',
+    deliveryAddress: 'Apartment 4B, Silver Oak Heights, Kilimani, Nairobi',
+    itemDescription: 'Luxury White Rose Bouquet & Glass Vase',
+    amountKes: 1850,
+    etaMinutes: 18,
+    status: DELIVERY_STATES.IN_TRANSIT
+  };
+
   
   const completedToday = orders.filter(o => o.status === DELIVERY_STATES.DELIVERED);
 
