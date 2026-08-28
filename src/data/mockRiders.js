@@ -1,7 +1,7 @@
 /**
  * Reflex Logistics - Localized Kenyan EV Fleet Data
  * Electric motorbike fleets: Roam Air, Spiro Commuter, Ampersand e-Boda
- * Authentic Kenyan Black male and female rider profile portraits (/riders/hesbon.jpg, etc.)
+ * Authentic Kenyan Black male and female rider profile portraits
  */
 
 export const MOCK_RIDERS = [
@@ -14,7 +14,7 @@ export const MOCK_RIDERS = [
     phone: "+254 712 345 678",
     formattedPhone: "0712345678",
     email: "hesbon.otieno@reflex.co.ke",
-    avatar: "/riders/hesbon.jpg",
+    avatar: "/assets/riders/hesbon_otieno.jpg",
     avatarFallback: "HO",
     rating: 4.9,
     completedDeliveries: 412,
@@ -40,7 +40,7 @@ export const MOCK_RIDERS = [
     phone: "+254 722 987 654",
     formattedPhone: "0722987654",
     email: "faith.wambui@reflex.co.ke",
-    avatar: "/riders/faith.jpg",
+    avatar: "/assets/riders/faith_wambui.jpg",
     avatarFallback: "FW",
     rating: 4.95,
     completedDeliveries: 538,
@@ -66,7 +66,7 @@ export const MOCK_RIDERS = [
     phone: "+254 733 456 789",
     formattedPhone: "0733456789",
     email: "aminah.hassan@reflex.co.ke",
-    avatar: "/riders/aminah.jpg",
+    avatar: "/assets/riders/aminah_hassan.jpg",
     avatarFallback: "AH",
     rating: 4.88,
     completedDeliveries: 389,
@@ -92,7 +92,7 @@ export const MOCK_RIDERS = [
     phone: "+254 701 234 567",
     formattedPhone: "0701234567",
     email: "brian.kipkorir@reflex.co.ke",
-    avatar: "/riders/brian.jpg",
+    avatar: "/assets/riders/brian_kipkorir.jpg",
     avatarFallback: "BK",
     rating: 4.78,
     completedDeliveries: 295,
