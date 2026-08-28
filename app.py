@@ -9,9 +9,27 @@ from datetime import datetime, timezone
 import random
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
+import shutil
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
+TMP_DATA_DIR = "/tmp/data"
+
+def init_data_dir():
+    try:
+        os.makedirs(TMP_DATA_DIR, exist_ok=True)
+        if os.path.exists(DATA_DIR):
+            for fname in os.listdir(DATA_DIR):
+                src = os.path.join(DATA_DIR, fname)
+                dst = os.path.join(TMP_DATA_DIR, fname)
+                if os.path.isfile(src) and not os.path.exists(dst):
+                    shutil.copy(src, dst)
+    except Exception as e:
+        print(f"init_data_dir error: {e}")
+
+init_data_dir()
+
+
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
