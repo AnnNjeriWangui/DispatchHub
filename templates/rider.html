@@ -269,19 +269,35 @@
           if (res.ok) {
             const apiOrders = await res.json();
             if (Array.isArray(apiOrders) && apiOrders.length > 0) {
+              const retailerMap = {
+                'RET-001': 'Savanna Blooms & Florist (Westlands)',
+                'RET-002': 'Rift Valley Artisan Goods (Karen)',
+                'RET-003': 'Nairobi Tech & Gadget Hub (CBD)',
+                'RET-004': 'Organic Fresh Basket (Gigiri)',
+                'RET-005': 'Urban Books & Stationers (Kilimani)'
+              };
+              const pickupMap = {
+                'RET-001': 'Mpaka Road Plaza, Westlands, Nairobi',
+                'RET-002': 'The Hub Mall, Dagoretti Rd, Karen',
+                'RET-003': 'Kimathi Street, Nairobi CBD',
+                'RET-004': 'UN Avenue, Gigiri, Nairobi',
+                'RET-005': 'Adlife Plaza, Chania Avenue, Kilimani'
+              };
               const mapped = apiOrders.map(o => ({
                 orderNumber: o.order_number,
-                retailerName: o.retailer_id === 'RET-002' ? 'Chandarana Foodplus' : 'Naivas Supermarket',
-                pickupAddress: 'Sarit Centre, Westlands, Nairobi',
+                retailerId: o.retailer_id,
+                retailerName: retailerMap[o.retailer_id] || 'Reflex Partner Merchant',
+                pickupAddress: pickupMap[o.retailer_id] || 'Sarit Centre, Westlands, Nairobi',
                 customerName: o.customer_name,
                 customerPhone: o.customer_phone,
                 deliveryAddress: o.delivery_address,
                 itemDescription: o.item_description,
-                status: o.status === 'In Transit' ? DELIVERY_STATES.IN_TRANSIT : (o.status === 'Delivered' ? DELIVERY_STATES.DELIVERED : DELIVERY_STATES.ASSIGNED),
-                amountKes: 1850,
-                verificationPin: '4829',
+                status: o.status === 'In Transit' ? DELIVERY_STATES.IN_TRANSIT : (o.status === 'Delivered' ? DELIVERY_STATES.DELIVERED : (o.status === 'Picked Up' ? DELIVERY_STATES.PICKED_UP : DELIVERY_STATES.ASSIGNED)),
+                amountKes: o.cod_amount || (o.item_value ? o.item_value + (o.delivery_fee || 300) : 2850),
+                verificationPin: o.verification_code || '4829',
                 qrPayload: `REFLEX-${o.order_number}-VERIFIED`,
-                etaMinutes: 20
+                etaMinutes: o.eta_minutes || 20,
+                notes: o.special_instructions || 'Deliver safely to recipient. Collect verification code upon delivery.'
               }));
               localStorage.setItem('reflex_orders_cache', JSON.stringify(mapped));
               return mapped;
@@ -303,48 +319,78 @@
         return [
           {
             orderNumber: "ORD-2026-0828-001",
-            retailerName: "Naivas Supermarket (Westlands)",
-            pickupAddress: "Sarit Centre, Lower Ground Floor, Westlands",
-            customerName: "David Ochieng",
-            customerPhone: "0722123456",
-            deliveryAddress: "Apartment B4, Rhapta Road, Westlands",
-            itemDescription: "Groceries & Fresh Supplies (2x Bags)",
-            status: DELIVERY_STATES.ASSIGNED,
-            amountKes: 2450,
-            verificationPin: "4829",
+            retailerName: "Savanna Blooms & Florist (Westlands)",
+            pickupAddress: "Mpaka Road Plaza, Westlands, Nairobi",
+            customerName: "Wanjiku Kimani",
+            customerPhone: "+254 711 234 567",
+            deliveryAddress: "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
+            itemDescription: "Luxury white rose bouquet with glass vase",
+            status: DELIVERY_STATES.DELIVERED,
+            amountKes: 4100,
+            verificationPin: "7194",
             qrPayload: "REFLEX-ORD-2026-0828-001-VERIFIED",
-            etaMinutes: 25,
-            notes: "Ring bell at gate. Leave with security if no answer."
+            etaMinutes: 0,
+            notes: "Keep upright and away from direct sunlight; fragile glass vases."
           },
           {
             orderNumber: "ORD-2026-0828-002",
-            retailerName: "Chandarana Foodplus (Kilimani)",
-            pickupAddress: "Adlife Plaza, Chania Avenue, Kilimani",
-            customerName: "Joy Mutua",
-            customerPhone: "0733987654",
-            deliveryAddress: "Greenwood Court, Marcus Garvey Rd, Kilimani",
-            itemDescription: "Imported Wine & Gourmet Treats",
-            status: DELIVERY_STATES.PICKED_UP,
-            amountKes: 4100,
-            verificationPin: "8192",
+            retailerName: "Rift Valley Artisan Goods (Karen)",
+            pickupAddress: "The Hub Mall, Dagoretti Rd, Karen",
+            customerName: "Juma Mwangi",
+            customerPhone: "+254 723 456 789",
+            deliveryAddress: "Suite 302, Diamond Plaza Annex, 4th Parklands Avenue, Parklands, Nairobi",
+            itemDescription: "Hand-carved soapstone chess set",
+            status: DELIVERY_STATES.IN_TRANSIT,
+            amountKes: 4850,
+            verificationPin: "5281",
             qrPayload: "REFLEX-ORD-2026-0828-002-VERIFIED",
-            etaMinutes: 15,
-            notes: "Customer requires SMS verification PIN."
+            etaMinutes: 18,
+            notes: "Handle with care; wooden crate packaging."
           },
           {
             orderNumber: "ORD-2026-0828-003",
-            retailerName: "Quickmart (Lavington)",
-            pickupAddress: "Lavington Mall, James Gichuru Rd",
-            customerName: "Peter Kamau",
-            customerPhone: "0711554433",
-            deliveryAddress: "House 12, Mvuli Road, Lavington",
-            itemDescription: "Baby Essentials & Pantry Refill",
+            retailerName: "Nairobi Tech & Gadget Hub (CBD)",
+            pickupAddress: "Kimathi Street, Nairobi CBD",
+            customerName: "Faith Chebet",
+            customerPhone: "+254 734 567 890",
+            deliveryAddress: "Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi",
+            itemDescription: "Noise-Cancelling Wireless Headphones & Powerbank",
             status: DELIVERY_STATES.IN_TRANSIT,
-            amountKes: 3200,
-            verificationPin: "1047",
+            amountKes: 9150,
+            verificationPin: "8934",
             qrPayload: "REFLEX-ORD-2026-0828-003-VERIFIED",
-            etaMinutes: 10,
-            notes: "Handle with extra care."
+            etaMinutes: 12,
+            notes: "Verify sealed box upon delivery."
+          },
+          {
+            orderNumber: "ORD-2026-0828-004",
+            retailerName: "Organic Fresh Basket (Gigiri)",
+            pickupAddress: "UN Avenue, Gigiri, Nairobi",
+            customerName: "Kevin Otieno",
+            customerPhone: "+254 745 678 901",
+            deliveryAddress: "7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi",
+            itemDescription: "Farm Fresh Family Vegetable Crate & Hass Avocados",
+            status: DELIVERY_STATES.DELIVERED,
+            amountKes: 2650,
+            verificationPin: "6412",
+            qrPayload: "REFLEX-ORD-2026-0828-004-VERIFIED",
+            etaMinutes: 0,
+            notes: "Perishable produce; deliver directly to reception desk."
+          },
+          {
+            orderNumber: "ORD-2026-0828-005",
+            retailerName: "Urban Books & Stationers (Kilimani)",
+            pickupAddress: "Adlife Plaza, Chania Avenue, Kilimani",
+            customerName: "Mercy Achieng",
+            customerPhone: "+254 756 789 012",
+            deliveryAddress: "House No. 45, Golden Gate Estate, South B, Nairobi",
+            itemDescription: "Architectural Design Handbooks & Premium Fountain Pen",
+            status: DELIVERY_STATES.ASSIGNED,
+            amountKes: 3350,
+            verificationPin: "3791",
+            qrPayload: "REFLEX-ORD-2026-0828-005-VERIFIED",
+            etaMinutes: 25,
+            notes: "Protect corners; water-resistant wrapping."
           }
         ];
       }

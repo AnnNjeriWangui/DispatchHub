@@ -13,17 +13,18 @@ from flask_cors import CORS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
-TMP_DATA_DIR = "/tmp/data"
+TMP_DATA_DIR = "/tmp/data" if (os.environ.get('VERCEL') or os.name != 'nt') else os.path.join(BASE_DIR, 'data')
 
 def init_data_dir():
     try:
-        os.makedirs(TMP_DATA_DIR, exist_ok=True)
-        if os.path.exists(DATA_DIR):
-            for fname in os.listdir(DATA_DIR):
-                src = os.path.join(DATA_DIR, fname)
-                dst = os.path.join(TMP_DATA_DIR, fname)
-                if os.path.isfile(src) and not os.path.exists(dst):
-                    shutil.copy(src, dst)
+        if TMP_DATA_DIR != DATA_DIR:
+            os.makedirs(TMP_DATA_DIR, exist_ok=True)
+            if os.path.exists(DATA_DIR):
+                for fname in os.listdir(DATA_DIR):
+                    src = os.path.join(DATA_DIR, fname)
+                    dst = os.path.join(TMP_DATA_DIR, fname)
+                    if os.path.isfile(src):
+                        shutil.copy(src, dst)
     except Exception as e:
         print(f"init_data_dir error: {e}")
 
@@ -59,7 +60,8 @@ def log_event(event_type, message, badge="INFO"):
     return event
 
 def load_json_file(filename):
-    for base in [TMP_DATA_DIR, DATA_DIR]:
+    bases = [DATA_DIR, TMP_DATA_DIR] if TMP_DATA_DIR == DATA_DIR else [TMP_DATA_DIR, DATA_DIR]
+    for base in bases:
         file_path = os.path.join(base, filename)
         if os.path.exists(file_path):
             try:
@@ -70,7 +72,8 @@ def load_json_file(filename):
     return []
 
 def save_json_file(filename, data):
-    for base in [TMP_DATA_DIR, DATA_DIR]:
+    bases = [DATA_DIR, TMP_DATA_DIR] if TMP_DATA_DIR == DATA_DIR else [TMP_DATA_DIR, DATA_DIR]
+    for base in bases:
         try:
             os.makedirs(base, exist_ok=True)
             file_path = os.path.join(base, filename)

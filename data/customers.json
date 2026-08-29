@@ -97,5 +97,50 @@
     "delivery_address": "Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD",
     "city": "Nairobi",
     "neighborhood": "Nairobi CBD"
+  },
+  {
+    "id": "CUST-012",
+    "name": "Brian Kiprono",
+    "phone": "+254 724 556 789",
+    "email": "brian.kiprono@example.co.ke",
+    "delivery_address": "House 9B, Karen Plains, Marist Road, Karen, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Karen"
+  },
+  {
+    "id": "CUST-013",
+    "name": "Halima Mohammed",
+    "phone": "+254 735 667 890",
+    "email": "halima.mohammed@example.co.ke",
+    "delivery_address": "Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "South C"
+  },
+  {
+    "id": "CUST-014",
+    "name": "Victor Omondi",
+    "phone": "+254 746 778 901",
+    "email": "victor.omondi@example.co.ke",
+    "delivery_address": "House 88, Greatwall Gardens Phase 2, Shanghai Rd, Athi River",
+    "city": "Athi River",
+    "neighborhood": "Athi River / Mavoko"
+  },
+  {
+    "id": "CUST-015",
+    "name": "Esther Nekesa",
+    "phone": "+254 757 889 012",
+    "email": "esther.nekesa@example.co.ke",
+    "delivery_address": "Suite 14, Section 58 Heights, Oginga Odinga Way, Nakuru",
+    "city": "Nakuru",
+    "neighborhood": "Section 58"
+  },
+  {
+    "id": "CUST-016",
+    "name": "Collins Cheruiyot",
+    "phone": "+254 768 990 123",
+    "email": "collins.cheruiyot@example.co.ke",
+    "delivery_address": "Villa 5, Elgon View Estate, Nandi Road, Eldoret",
+    "city": "Eldoret",
+    "neighborhood": "Elgon View"
   }
 ]

@@ -68,6 +68,16 @@ This project is built and maintained collaboratively by:
 4. **Kevin Otieno** — `+254 745 678 901` (7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi)
 5. **Mercy Achieng** — `+254 756 789 012` (House No. 45, Golden Gate Estate, South B, Nairobi)
 6. **Dennis Mutiso** — `+254 767 890 123` (Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi)
+7. **Amara Njoroge** — `+254 778 001 234` (Flat 7A, Lavington Green Apartments, James Gichuru Road, Lavington, Nairobi)
+8. **Silas Kiprop** — `+254 789 112 345` (House 22, Milimani Estate, Kisumu-Nairobi Highway, Kisumu)
+9. **Zara Abdi** — `+254 790 223 456` (Apt 3C, Tudor Court, Nyali Road, Nyali, Mombasa)
+10. **Linet Wanjiru** — `+254 701 334 567` (Plot 18, Runda Mimosa, Runda Estate, Nairobi)
+11. **Omar Sheikh** — `+254 712 445 678` (Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD)
+12. **Brian Kiprono** — `+254 724 556 789` (House 9B, Karen Plains, Marist Road, Karen, Nairobi)
+13. **Halima Mohammed** — `+254 735 667 890` (Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi)
+14. **Victor Omondi** — `+254 746 778 901` (House 88, Greatwall Gardens Phase 2, Shanghai Rd, Athi River)
+15. **Esther Nekesa** — `+254 757 889 012` (Suite 14, Section 58 Heights, Oginga Odinga Way, Nakuru)
+16. **Collins Cheruiyot** — `+254 768 990 123` (Villa 5, Elgon View Estate, Nandi Road, Eldoret)
 
 ---
 

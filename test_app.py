@@ -1,11 +1,18 @@
 import unittest
 import json
-from app import app, generate_order_number
+import copy
+from app import app, get_orders, save_orders
 
 class TestDispatchHub(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.client = app.test_client()
+        # Save snapshot of original orders to prevent test contamination
+        self.original_orders = copy.deepcopy(get_orders())
+
+    def tearDown(self):
+        # Restore snapshot of original orders
+        save_orders(self.original_orders)
 
     def test_health(self):
         rv = self.client.get('/api/health')
@@ -45,11 +52,24 @@ class TestDispatchHub(unittest.TestCase):
         rv = self.client.get('/api/customers')
         self.assertEqual(rv.status_code, 200)
         data = rv.get_json()
-        self.assertGreaterEqual(len(data), 6)
+        self.assertGreaterEqual(len(data), 12)
         names = [c['name'] for c in data]
         self.assertIn('Wanjiku Kimani', names)
         self.assertIn('Faith Chebet', names)
         self.assertIn('Dennis Mutiso', names)
+        self.assertIn('Zara Abdi', names)
+        self.assertIn('Victor Omondi', names)
+        self.assertIn('Collins Cheruiyot', names)
+        
+        # Check no duplicates in customer names
+        self.assertEqual(len(names), len(set(names)), "Customer names must be unique without duplicates")
+
+    def test_no_duplicate_orders(self):
+        rv = self.client.get('/api/orders')
+        self.assertEqual(rv.status_code, 200)
+        orders = rv.get_json()
+        order_numbers = [o['order_number'] for o in orders]
+        self.assertEqual(len(order_numbers), len(set(order_numbers)), "Order numbers must be unique without duplicates")
 
     def test_metrics(self):
         rv = self.client.get('/api/metrics?retailer_id=RET-001')
@@ -61,11 +81,11 @@ class TestDispatchHub(unittest.TestCase):
         self.assertIn('delivered_orders', data)
 
     def test_search_order(self):
-        rv = self.client.get('/api/orders/search?order_number=ORD-2026-0826-001')
+        rv = self.client.get('/api/orders/search?order_number=ORD-2026-0828-001')
         self.assertEqual(rv.status_code, 200)
         data = rv.get_json()
         self.assertTrue(data['found'])
-        self.assertEqual(data['order']['order_number'], 'ORD-2026-0826-001')
+        self.assertEqual(data['order']['order_number'], 'ORD-2026-0828-001')
 
     def test_riders_and_telematics(self):
         rv = self.client.get('/api/riders')
@@ -81,9 +101,9 @@ class TestDispatchHub(unittest.TestCase):
         # 1. Create order
         new_order_payload = {
             "retailer_id": "RET-001",
-            "customer_name": "Wanjiku Kimani",
-            "customer_phone": "+254 711 234 567",
-            "delivery_address": "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
+            "customer_name": "Halima Mohammed",
+            "customer_phone": "+254 735 667 890",
+            "delivery_address": "Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi",
             "item_description": "Luxury white rose bouquet with glass vase",
             "special_instructions": "Fragile vase",
             "auto_assign": False
@@ -115,9 +135,9 @@ class TestDispatchHub(unittest.TestCase):
         # Create pending order
         payload = {
             "retailer_id": "RET-002",
-            "customer_name": "Faith Chebet",
-            "customer_phone": "+254 734 567 890",
-            "delivery_address": "Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi",
+            "customer_name": "Collins Cheruiyot",
+            "customer_phone": "+254 768 990 123",
+            "delivery_address": "Villa 5, Elgon View Estate, Nandi Road, Eldoret",
             "item_description": "Handcrafted vase",
             "auto_assign": False
         }
