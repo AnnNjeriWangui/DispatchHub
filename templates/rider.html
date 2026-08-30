@@ -599,18 +599,37 @@
 
                 <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2">
                   <span className="text-[11px] font-bold text-slate-400 block">Select Demo Rider Profile:</span>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="grid grid-cols-3 gap-2">
                     {MOCK_RIDERS.map(r => (
                       <button
                         key={r.id}
                         type="button"
                         onClick={() => setPhone(r.formattedPhone)}
-                        className={`text-left p-2 rounded-lg text-xs border ${
-                          phone === r.formattedPhone ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold' : 'bg-slate-900 border-slate-800 text-slate-400'
+                        className={`flex flex-col items-center gap-1.5 p-2 rounded-xl text-center text-xs border transition-all ${
+                          phone === r.formattedPhone
+                            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold shadow-lg shadow-emerald-900/40'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-600'
                         }`}
                       >
-                        <div className="font-bold">{r.name}</div>
-                        <div className="text-[10px] opacity-75">{r.vehicle.plateNumber}</div>
+                        <div className="relative w-10 h-10 flex-shrink-0">
+                          <img
+                            src={r.avatar}
+                            alt={r.name}
+                            className="w-10 h-10 rounded-xl object-cover border-2 border-emerald-500/40"
+                            onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+                          />
+                          <div
+                            className="hidden w-10 h-10 rounded-xl items-center justify-center font-black text-[11px] text-white border-2 border-emerald-500/40"
+                            style={{ background: 'linear-gradient(135deg, #1B4332 0%, #2D6A4F 60%, #40916C 100%)' }}
+                          >
+                            {r.avatarFallback}
+                          </div>
+                          <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-slate-900 ${
+                            r.dutyStatus === 'ONLINE' ? 'bg-emerald-400' : 'bg-amber-400'
+                          }`} />
+                        </div>
+                        <div className="font-bold text-[10px] leading-tight line-clamp-2">{r.name}</div>
+                        <div className="text-[9px] opacity-60 font-mono">{r.vehicle.plateNumber}</div>
                       </button>
                     ))}
                   </div>
@@ -673,7 +692,25 @@
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={rider.avatar} alt={rider.name} className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/50" />
+              <div className="relative">
+                <img
+                  src={rider.avatar}
+                  alt={rider.name}
+                  className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/50 shadow-md"
+                  onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+                />
+                <div
+                  className="hidden w-14 h-14 rounded-2xl items-center justify-center font-black text-lg text-white border-2 border-emerald-500/50 shadow-md"
+                  style={{ background: 'linear-gradient(135deg, #1B4332 0%, #2D6A4F 60%, #40916C 100%)' }}
+                >
+                  {rider.avatarFallback}
+                </div>
+                <span className={`absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold border-2 border-slate-900 ${
+                  rider.dutyStatus === 'ONLINE' ? 'bg-emerald-500 text-slate-950' : 'bg-amber-500 text-slate-950'
+                }`}>
+                  {rider.dutyStatus}
+                </span>
+              </div>
               <div>
                 <h2 className="text-base font-black text-white">{rider.name} <span className="text-xs font-normal text-slate-400">({rider.gender})</span></h2>
                 <p className="text-xs text-slate-400">{rider.phone}</p>

@@ -151,6 +151,29 @@ def rider_portal():
 def track_portal():
     return render_template('track.html')
 
+# Serve rider photos via /assets/riders/ (used by davis's template & rider.html)
+@app.route('/assets/riders/<path:filename>')
+def serve_rider_assets(filename):
+    # Try static/assets/riders first, then public/assets/riders
+    for folder in [
+        os.path.join(BASE_DIR, 'static', 'assets', 'riders'),
+        os.path.join(BASE_DIR, 'public', 'assets', 'riders'),
+    ]:
+        if os.path.exists(os.path.join(folder, filename)):
+            return send_from_directory(folder, filename)
+    return '', 404
+
+# Serve rider photos via /riders/ (short alias used by some templates)
+@app.route('/riders/<path:filename>')
+def serve_riders_short(filename):
+    for folder in [
+        os.path.join(BASE_DIR, 'static', 'riders'),
+        os.path.join(BASE_DIR, 'public', 'riders'),
+    ]:
+        if os.path.exists(os.path.join(folder, filename)):
+            return send_from_directory(folder, filename)
+    return '', 404
+
 # ----------------- API ENDPOINTS -----------------
 
 @app.route('/api/health', methods=['GET'])
