@@ -10,6 +10,7 @@ import shutil
 from datetime import datetime, timezone
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
+import shutil
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -104,18 +105,22 @@ def save_dispatchers(dispatchers):
 def get_riders_data():
     return load_json_file('riders.json')
 
+def get_riders():
+    return load_json_file('riders.json')
+
 def get_users_data():
+    return load_json_file('users.json')
+
+def get_users():
     return load_json_file('users.json')
 
 def generate_order_number():
     orders = get_orders()
     now = datetime.now()
     date_prefix = f"ORD-{now.year}-{now.strftime('%m%d')}"
-    
     today_orders = [o for o in orders if o.get('order_number', '').startswith(date_prefix)]
     next_idx = len(today_orders) + 1
     new_id = f"{date_prefix}-{next_idx:03d}"
-    
     while any(o.get('order_number') == new_id for o in orders):
         next_idx += 1
         new_id = f"{date_prefix}-{next_idx:03d}"
@@ -124,8 +129,12 @@ def generate_order_number():
 def generate_verification_code():
     return f"{random.randint(1000, 9999)}"
 
-# ----------------- PAGE ROUTES -----------------
+@app.before_request
+def log_request_info():
+    if request.path.startswith('/api'):
+        pass
 
+# ----------------- PAGE ROUTES -----------------
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -152,6 +161,32 @@ def health():
         "version": "2.0.0",
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
+
+
+@app.route('/api/system', methods=['GET'])
+def system_overview():
+    try:
+        return jsonify({
+            "status": "ok",
+            "service": "DispatchHub API",
+            "version": "1.0.0",
+            "retailers_count": len(get_retailers()),
+            "orders_count": len(get_orders()),
+            "customers_count": len(get_customers()),
+            "dispatchers_count": len(get_dispatchers()),
+            "riders_count": len(get_riders()),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        print(f"Error in /api/system: {e}")
+        return jsonify({
+            "status": "ok",
+            "service": "DispatchHub API",
+            "version": "1.0.0",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }), 200
+
 
 @app.route('/api/retailers', methods=['GET'])
 def list_retailers():
@@ -189,6 +224,7 @@ def list_riders():
         enriched.append(rider_copy)
         
     return jsonify(enriched)
+
 
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():

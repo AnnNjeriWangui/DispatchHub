@@ -182,28 +182,28 @@ class RiderService {
   async getAssignedOrders(riderId = null) {
     const currentRider = this.getCurrentRider();
     const targetRiderId = riderId || currentRider.id;
-    const apiUrl = getApiUrl();
 
-    // If backend API URL is explicitly configured and online, attempt API fetch
-    if (apiUrl && navigator.onLine) {
+    if (typeof fetch !== 'undefined') {
       try {
-        const response = await fetch(`${apiUrl}/api/orders`);
+        const response = await fetch('/api/orders');
         if (response.ok) {
           const apiOrders = await response.json();
-          const mapped = apiOrders.map(o => this.normalizeOrder(o, targetRiderId));
-          localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(mapped));
-          return mapped;
+          if (Array.isArray(apiOrders) && apiOrders.length > 0) {
+            const mapped = apiOrders.map(o => this.normalizeOrder(o, targetRiderId));
+            localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(mapped));
+            return mapped;
+          }
         }
       } catch (e) {
-        console.warn('Backend API unavailable. Falling back to local storage state:', e);
+        console.warn('[RiderService] Local API fetch /api/orders failed, using cached/mock orders:', e.message);
       }
     }
 
-    // Static Client Mode: Read directly from localStorage
     const cached = localStorage.getItem(STORAGE_KEYS.ORDERS_CACHE);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {
         console.warn('Failed parsing cached orders:', e);
       }
@@ -213,6 +213,7 @@ class RiderService {
     localStorage.setItem(STORAGE_KEYS.ORDERS_CACHE, JSON.stringify(initialMocks));
     return initialMocks;
   }
+
 
   normalizeOrder(order, riderId) {
     let normalizedStatus = DELIVERY_STATES.ASSIGNED;

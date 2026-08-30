@@ -33,9 +33,17 @@ export default function RiderCard({ rider, onStatusToggle, compact = false }) {
                 e.target.nextSibling.style.display = 'flex';
               }}
             />
-            <div className="hidden w-10 h-10 rounded-full bg-emerald-700 text-white font-bold items-center justify-center text-sm border border-emerald-500/40">
+            <div
+              className="hidden w-10 h-10 rounded-full text-white font-black items-center justify-center text-xs border-2 border-emerald-400 shadow-md"
+              style={{
+                background: 'linear-gradient(135deg, #006600 0%, #000000 50%, #CC0000 100%)',
+                color: '#ffffff',
+                textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+              }}
+            >
               {rider.avatarFallback}
             </div>
+
             <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-slate-900 ${
               rider.dutyStatus === 'ONLINE' ? 'bg-emerald-500' : 'bg-amber-500'
             }`} />
@@ -88,9 +96,17 @@ export default function RiderCard({ rider, onStatusToggle, compact = false }) {
                 e.target.nextSibling.style.display = 'flex';
               }}
             />
-            <div className="hidden w-14 h-14 rounded-2xl bg-emerald-700 text-white font-bold items-center justify-center text-lg border-2 border-emerald-500/50">
+            <div
+              className="hidden w-14 h-14 rounded-2xl text-white font-black items-center justify-center text-lg border-2 border-emerald-400 shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, #006600 0%, #000000 50%, #CC0000 100%)',
+                color: '#ffffff',
+                textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+              }}
+            >
               {rider.avatarFallback}
             </div>
+
             <span className={`absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold border-2 border-slate-900 ${
               rider.dutyStatus === 'ONLINE' ? 'bg-emerald-500 text-slate-950' : 'bg-amber-500 text-slate-950'
             }`}>

@@ -1,6 +1,7 @@
 /**
  * Reflex Logistics - Localized Kenyan EV Fleet Data
  * Electric motorbike fleets: Roam Air, Spiro Commuter, Ampersand e-Boda
+ * Authentic Kenyan Black male and female rider profile portraits
  */
 
 export const MOCK_RIDERS = [
@@ -8,10 +9,12 @@ export const MOCK_RIDERS = [
     id: "RIDER-001",
     name: "Hesbon Otieno",
     gender: "Male",
+    tribe: "Luo",
+    age: 26,
     phone: "+254 712 345 678",
     formattedPhone: "0712345678",
     email: "hesbon.otieno@reflex.co.ke",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    avatar: "/assets/riders/hesbon_otieno.jpg",
     avatarFallback: "HO",
     rating: 4.9,
     completedDeliveries: 412,
@@ -32,10 +35,12 @@ export const MOCK_RIDERS = [
     id: "RIDER-002",
     name: "Faith Wambui",
     gender: "Female",
+    tribe: "Kikuyu",
+    age: 24,
     phone: "+254 722 987 654",
     formattedPhone: "0722987654",
     email: "faith.wambui@reflex.co.ke",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    avatar: "/assets/riders/faith_wambui.jpg",
     avatarFallback: "FW",
     rating: 4.95,
     completedDeliveries: 538,
@@ -56,10 +61,12 @@ export const MOCK_RIDERS = [
     id: "RIDER-003",
     name: "Aminah Hassan",
     gender: "Female",
+    tribe: "Swahili",
+    age: 22,
     phone: "+254 733 456 789",
     formattedPhone: "0733456789",
     email: "aminah.hassan@reflex.co.ke",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+    avatar: "/assets/riders/aminah_hassan.jpg",
     avatarFallback: "AH",
     rating: 4.88,
     completedDeliveries: 389,
@@ -80,10 +87,12 @@ export const MOCK_RIDERS = [
     id: "RIDER-004",
     name: "Brian Kipkorir",
     gender: "Male",
+    tribe: "Kalenjin",
+    age: 28,
     phone: "+254 701 234 567",
     formattedPhone: "0701234567",
     email: "brian.kipkorir@reflex.co.ke",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    avatar: "/assets/riders/brian_kipkorir.jpg",
     avatarFallback: "BK",
     rating: 4.78,
     completedDeliveries: 295,
