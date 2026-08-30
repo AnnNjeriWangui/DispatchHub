@@ -12,7 +12,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="theme-light">
+<body>
   <!-- Top Navigation Bar -->
   <header class="top-nav">
     <div class="nav-brand">
@@ -42,20 +42,15 @@
         <span class="pulse-dot"></span>
         <span id="currentTime">Nairobi (EAT)</span>
       </div>
-      <a href="/dispatcher" id="btnHeaderDispatcherPortal" class="btn btn-sm glow-btn" style="background: linear-gradient(135deg, #065F46, #064E3B); color: #ffffff; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25);">
+      <a href="/dispatcher" id="btnHeaderDispatcherPortal" class="btn btn-primary btn-sm glow-btn">
         <i data-lucide="cpu"></i> 🎯 Dispatcher Hub
       </a>
-      <a href="/rider" id="btnHeaderRiderPortal" class="btn btn-sm glow-btn" style="background: linear-gradient(135deg, #047857, #022C22); color: #ffffff; font-weight: 700; border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);">
+      <a href="/rider" id="btnHeaderRiderPortal" class="btn btn-sm glow-btn" style="background: linear-gradient(135deg, #1E2D45, #0F1929); color: #94A3B8; font-weight: 700; border: 1px solid rgba(148,163,184,0.20); border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
         <i data-lucide="zap"></i> ⚡ Rider Portal
       </a>
-      <a href="/track" id="btnHeaderTrackPortal" class="btn btn-outline btn-sm" style="font-weight: 600; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+      <a href="/track" id="btnHeaderTrackPortal" class="btn btn-outline btn-sm">
         <i data-lucide="map-pin"></i> 🔍 Track
       </a>
-      <!-- Theme Switcher -->
-      <button id="btnThemeToggle" class="btn btn-outline btn-sm theme-toggle-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
-        <i data-lucide="moon" id="themeIcon"></i>
-        <span id="themeText">Dark</span>
-      </button>
       <button id="btnNewOrderHeader" class="btn btn-primary btn-sm glow-btn">
         <i data-lucide="plus-circle"></i> New Delivery
       </button>
