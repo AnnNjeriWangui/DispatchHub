@@ -10,7 +10,7 @@
     "rating": 4.9,
     "battery_level": 88,
     "assigned_zone": "Westlands / Parklands",
-    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/hesbon_otieno.jpg",
     "completed_deliveries": 412
   },
   {
@@ -24,7 +24,7 @@
     "rating": 4.95,
     "battery_level": 74,
     "assigned_zone": "Kilimani / Kileleshwa",
-    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/faith_wambui.jpg",
     "completed_deliveries": 538
   },
   {
@@ -38,7 +38,7 @@
     "rating": 4.88,
     "battery_level": 92,
     "assigned_zone": "Nairobi CBD / Upper Hill",
-    "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/aminah_hassan.jpg",
     "completed_deliveries": 389
   },
   {
@@ -52,7 +52,7 @@
     "rating": 4.78,
     "battery_level": 65,
     "assigned_zone": "Industrial Area / South B",
-    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/brian_kipkorir.jpg",
     "completed_deliveries": 295
   },
   {
@@ -66,7 +66,7 @@
     "rating": 4.9,
     "battery_level": 95,
     "assigned_zone": "Westlands / Parklands",
-    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/jackson_kiprotich.jpg",
     "completed_deliveries": 480
   },
   {
@@ -80,7 +80,7 @@
     "rating": 4.8,
     "battery_level": 82,
     "assigned_zone": "Lavington / Kileleshwa",
-    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/samuel_odhiambo.jpg",
     "completed_deliveries": 310
   },
   {
@@ -94,7 +94,7 @@
     "rating": 4.95,
     "battery_level": 90,
     "assigned_zone": "Nairobi CBD / Upper Hill",
-    "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/peter_kamau.jpg",
     "completed_deliveries": 620
   },
   {
@@ -108,7 +108,7 @@
     "rating": 4.85,
     "battery_level": 86,
     "assigned_zone": "Karen / Langata",
-    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/grace_nduta.jpg",
     "completed_deliveries": 350
   },
   {
@@ -122,7 +122,7 @@
     "rating": 4.9,
     "battery_level": 78,
     "assigned_zone": "Thika Road / Kiambu / Ruaka",
-    "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+    "avatar": "/static/assets/riders/boniface_maina.jpg",
     "completed_deliveries": 515
   }
 ]

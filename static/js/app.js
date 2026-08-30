@@ -327,6 +327,37 @@ function updateMetricsDisplay(metrics) {
 }
 
 // ==========================================
+// Driver Avatar Lookup Helper
+// ==========================================
+function getDriverAvatar(dispatcherId, dispatcherName) {
+  const driverMap = {
+    'RIDER-001': '/static/assets/riders/hesbon_otieno.jpg',
+    'RIDER-002': '/static/assets/riders/faith_wambui.jpg',
+    'RIDER-003': '/static/assets/riders/aminah_hassan.jpg',
+    'RIDER-004': '/static/assets/riders/brian_kipkorir.jpg',
+    'DISP-001': '/static/assets/riders/jackson_kiprotich.jpg',
+    'DISP-002': '/static/assets/riders/samuel_odhiambo.jpg',
+    'DISP-003': '/static/assets/riders/peter_kamau.jpg',
+    'DISP-004': '/static/assets/riders/grace_nduta.jpg',
+    'DISP-005': '/static/assets/riders/boniface_maina.jpg',
+  };
+  if (dispatcherId && driverMap[dispatcherId]) return driverMap[dispatcherId];
+  if (dispatcherName) {
+    const clean = dispatcherName.toLowerCase();
+    if (clean.includes('hesbon')) return '/static/assets/riders/hesbon_otieno.jpg';
+    if (clean.includes('faith')) return '/static/assets/riders/faith_wambui.jpg';
+    if (clean.includes('aminah') || clean.includes('amina')) return '/static/assets/riders/aminah_hassan.jpg';
+    if (clean.includes('brian')) return '/static/assets/riders/brian_kipkorir.jpg';
+    if (clean.includes('jackson')) return '/static/assets/riders/jackson_kiprotich.jpg';
+    if (clean.includes('samuel')) return '/static/assets/riders/samuel_odhiambo.jpg';
+    if (clean.includes('peter')) return '/static/assets/riders/peter_kamau.jpg';
+    if (clean.includes('grace')) return '/static/assets/riders/grace_nduta.jpg';
+    if (clean.includes('boniface')) return '/static/assets/riders/boniface_maina.jpg';
+  }
+  return '/static/assets/riders/hesbon_otieno.jpg';
+}
+
+// ==========================================
 // Render Orders Table
 // ==========================================
 function renderOrdersTable(orders) {
@@ -383,10 +414,15 @@ function renderOrdersTable(orders) {
       </td>
       <td>
         <div class="dispatcher-cell">
-          <span class="disp-name">${order.dispatcher_name || 'Unassigned'}</span>
-          <span class="disp-details">
-            <i data-lucide="truck"></i> ${order.vehicle_type || 'Awaiting'}
-          </span>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <img src="${getDriverAvatar(order.dispatcher_id, order.dispatcher_name)}" alt="${escapeHtml(order.dispatcher_name || 'Driver')}" style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(82, 183, 136, 0.45); flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.3);" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
+            <div>
+              <span class="disp-name">${order.dispatcher_name || 'Unassigned'}</span>
+              <span class="disp-details">
+                <i data-lucide="phone" style="width:12px;height:12px"></i> ${order.driver_phone || 'Awaiting'}
+              </span>
+            </div>
+          </div>
         </div>
       </td>
       <td class="text-right">
@@ -502,6 +538,10 @@ function displayQuickSearchResult(order) {
   elements.resStatusBadge.className = `badge ${getStatusBadgeClass(order.status)}`;
   
   elements.resDispatcherName.textContent = order.dispatcher_name || 'Pending Assignment';
+  const driverAvatarEl = document.getElementById('resDriverAvatar');
+  if (driverAvatarEl) {
+    driverAvatarEl.src = getDriverAvatar(order.dispatcher_id, order.dispatcher_name);
+  }
   elements.resDriverPhone.textContent = order.driver_phone || 'N/A';
   if (order.driver_phone && order.driver_phone.startsWith('+')) {
     elements.resDriverPhone.href = `tel:${order.driver_phone}`;

@@ -171,13 +171,11 @@
             <span>Your Delivery Rider</span>
           </span>
 
-          <div class="flex items-center space-x-3 pt-1">
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base font-extrabold border border-emerald-500/30" id="dispRiderAvatar">
-              HO
-            </div>
+          <div class="flex items-center space-x-3.5 pt-1">
+            <img src="/static/assets/riders/hesbon_otieno.jpg" id="dispRiderAvatar" alt="Driver" class="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-md flex-shrink-0" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
             <div>
               <h3 class="font-bold text-white text-sm" id="dispRiderName">Hesbon Otieno</h3>
-              <p class="text-xs text-slate-400" id="dispVehicle">Electric Roam Motorbike • KME 102G</p>
+              <p class="text-xs text-slate-300" id="dispVehicle">Electric Roam Motorbike • KME 102G</p>
               <div class="text-[11px] text-amber-400 font-semibold mt-0.5">⭐ 4.9 Rating (412 Deliveries)</div>
             </div>
           </div>
@@ -339,6 +337,33 @@
       }
       
       // Rider
+      const driverMap = {
+        'RIDER-001': '/static/assets/riders/hesbon_otieno.jpg',
+        'RIDER-002': '/static/assets/riders/faith_wambui.jpg',
+        'RIDER-003': '/static/assets/riders/aminah_hassan.jpg',
+        'RIDER-004': '/static/assets/riders/brian_kipkorir.jpg',
+        'DISP-001': '/static/assets/riders/jackson_kiprotich.jpg',
+        'DISP-002': '/static/assets/riders/samuel_odhiambo.jpg',
+        'DISP-003': '/static/assets/riders/peter_kamau.jpg',
+        'DISP-004': '/static/assets/riders/grace_nduta.jpg',
+        'DISP-005': '/static/assets/riders/boniface_maina.jpg'
+      };
+      let avatarSrc = driverMap[order.dispatcher_id];
+      if (!avatarSrc && order.dispatcher_name) {
+        const clean = order.dispatcher_name.toLowerCase();
+        if (clean.includes('hesbon')) avatarSrc = '/static/assets/riders/hesbon_otieno.jpg';
+        else if (clean.includes('faith')) avatarSrc = '/static/assets/riders/faith_wambui.jpg';
+        else if (clean.includes('aminah') || clean.includes('amina')) avatarSrc = '/static/assets/riders/aminah_hassan.jpg';
+        else if (clean.includes('brian')) avatarSrc = '/static/assets/riders/brian_kipkorir.jpg';
+        else if (clean.includes('jackson')) avatarSrc = '/static/assets/riders/jackson_kiprotich.jpg';
+        else if (clean.includes('samuel')) avatarSrc = '/static/assets/riders/samuel_odhiambo.jpg';
+        else if (clean.includes('peter')) avatarSrc = '/static/assets/riders/peter_kamau.jpg';
+        else if (clean.includes('grace')) avatarSrc = '/static/assets/riders/grace_nduta.jpg';
+        else if (clean.includes('boniface')) avatarSrc = '/static/assets/riders/boniface_maina.jpg';
+      }
+      const avatarEl = document.getElementById('dispRiderAvatar');
+      if (avatarEl) avatarEl.src = avatarSrc || '/static/assets/riders/hesbon_otieno.jpg';
+
       document.getElementById('dispRiderName').textContent = order.dispatcher_name || 'Pending assignment';
       document.getElementById('dispVehicle').textContent = `${order.vehicle_type || 'Electric Boda'} • ${order.vehicle_reg || 'KME 102G'}`;
       document.getElementById('btnCallDriver').href = `tel:${order.driver_phone || '+254712345678'}`;

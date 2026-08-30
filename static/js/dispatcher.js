@@ -234,13 +234,40 @@ function renderOrdersTable() {
       ? `<span class="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-rose-500 text-slate-950 uppercase">URGENT</span>` 
       : '';
       
+function getRiderAvatarUrl(riderId, riderName) {
+  const map = {
+    'RIDER-001': '/static/assets/riders/hesbon_otieno.jpg',
+    'RIDER-002': '/static/assets/riders/faith_wambui.jpg',
+    'RIDER-003': '/static/assets/riders/aminah_hassan.jpg',
+    'RIDER-004': '/static/assets/riders/brian_kipkorir.jpg',
+    'DISP-001': '/static/assets/riders/jackson_kiprotich.jpg',
+    'DISP-002': '/static/assets/riders/samuel_odhiambo.jpg',
+    'DISP-003': '/static/assets/riders/peter_kamau.jpg',
+    'DISP-004': '/static/assets/riders/grace_nduta.jpg',
+    'DISP-005': '/static/assets/riders/boniface_maina.jpg'
+  };
+  if (riderId && map[riderId]) return map[riderId];
+  if (riderName) {
+    const clean = riderName.toLowerCase();
+    if (clean.includes('hesbon')) return '/static/assets/riders/hesbon_otieno.jpg';
+    if (clean.includes('faith')) return '/static/assets/riders/faith_wambui.jpg';
+    if (clean.includes('aminah') || clean.includes('amina')) return '/static/assets/riders/aminah_hassan.jpg';
+    if (clean.includes('brian')) return '/static/assets/riders/brian_kipkorir.jpg';
+    if (clean.includes('jackson')) return '/static/assets/riders/jackson_kiprotich.jpg';
+    if (clean.includes('samuel')) return '/static/assets/riders/samuel_odhiambo.jpg';
+    if (clean.includes('peter')) return '/static/assets/riders/peter_kamau.jpg';
+    if (clean.includes('grace')) return '/static/assets/riders/grace_nduta.jpg';
+    if (clean.includes('boniface')) return '/static/assets/riders/boniface_maina.jpg';
+  }
+  return '/static/assets/riders/hesbon_otieno.jpg';
+}
+
     // Dispatcher / Rider display
     const hasRider = order.dispatcher_id && order.dispatcher_name && order.dispatcher_name !== 'Auto-Assigning...';
+    const riderAvatar = getRiderAvatarUrl(order.dispatcher_id, order.dispatcher_name);
     const riderDisplay = hasRider ? `
-      <div class="flex items-center space-x-2">
-        <div class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">
-          ${order.dispatcher_name.split(' ').map(n=>n[0]).join('')}
-        </div>
+      <div class="flex items-center space-x-2.5">
+        <img src="${riderAvatar}" alt="${order.dispatcher_name}" class="w-8 h-8 rounded-lg object-cover border border-emerald-500/40 shadow-sm flex-shrink-0" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
         <div>
           <div class="font-bold text-white text-xs">${order.dispatcher_name}</div>
           <div class="text-[10px] text-slate-400 font-mono">${order.driver_phone || '+254 7XX XXX'}</div>
@@ -338,10 +365,11 @@ function renderFleetCards() {
     const bat = rider.battery_level || 85;
     const batColor = bat > 70 ? 'bg-emerald-500' : (bat > 30 ? 'bg-amber-500' : 'bg-rose-500');
 
+    const riderImg = rider.avatar || getRiderAvatarUrl(rider.id, rider.name);
     card.innerHTML = `
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
-          <img src="${rider.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}" class="w-10 h-10 rounded-xl object-cover border border-slate-700">
+          <img src="${riderImg}" alt="${rider.name}" class="w-11 h-11 rounded-xl object-cover border border-emerald-500/40 shadow-sm" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
           <div>
             <h4 class="font-bold text-white text-xs">${rider.name}</h4>
             <div class="text-[10px] font-mono text-slate-400">${rider.id} • ⭐ ${rider.rating || 4.9}</div>
@@ -502,9 +530,10 @@ window.openAssignModal = function(orderNumber) {
     
     div.onclick = () => assignRiderToOrder(order.order_number, rider.id);
     
+    const modalRiderImg = rider.avatar || getRiderAvatarUrl(rider.id, rider.name);
     div.innerHTML = `
       <div class="flex items-center space-x-3">
-        <img src="${rider.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}" class="w-9 h-9 rounded-xl object-cover">
+        <img src="${modalRiderImg}" alt="${rider.name}" class="w-10 h-10 rounded-xl object-cover border border-emerald-500/40" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
         <div>
           <h5 class="text-xs font-bold text-white group-hover:text-emerald-400 transition">${rider.name}</h5>
           <div class="text-[10px] text-slate-400">${rider.vehicle_type} • 🔋 ${rider.battery_level || 85}%</div>
