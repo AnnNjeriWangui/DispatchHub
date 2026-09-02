@@ -185,6 +185,29 @@ body {
   border-color: var(--color-primary);
 }
 
+/* Portal Navigation Links — used in header for secondary portals */
+.portal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-main);
+  text-decoration: none;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.portal-link:hover {
+  color: #ffffff;
+  background: rgba(79, 70, 229, 0.18);
+  border-color: rgba(79, 70, 229, 0.45);
+}
+
 .btn-glass {
   background: var(--bg-surface);
   color: var(--text-primary);
