@@ -528,7 +528,7 @@
       };
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4" style="background-color: #f8fafc;">
+        <div className="min-h-screen flex items-center justify-center p-4" style={{backgroundColor: '#f8fafc'}}>
           <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl text-slate-800 space-y-6">
             <div className="text-center">
               <div className="w-14 h-14 bg-indigo-50 border border-indigo-200 rounded-2xl mx-auto flex items-center justify-center text-indigo-600 text-2xl font-black mb-3">
@@ -917,10 +917,10 @@
       const filtered = orders.filter(o => tab === 'ALL' || o.status === tab);
 
       return (
-        <div className="min-h-screen pb-20" style="background-color: #f8fafc;">
+        <div className="min-h-screen pb-20" style={{backgroundColor: '#f8fafc'}}>
           
-          <!-- Top Navigation Header (Deep Midnight Slate) -->
-          <header class="sticky top-0 z-40 bg-[#0f172a] border-b border-slate-800 px-4 py-3 shadow-md">
+          {/* Top Navigation Header (Deep Midnight Slate) */}
+          <header className="sticky top-0 z-40 bg-[#0f172a] border-b border-slate-800 px-4 py-3 shadow-md">
             <div className="max-w-xl mx-auto flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-8 h-8 rounded-xl bg-indigo-600/30 text-indigo-400 font-black flex items-center justify-center">⚡</span>
@@ -951,7 +951,7 @@
             </div>
           </header>
 
-          <!-- Main Body -->
+          {/* Main Body */}
           <main className="max-w-xl mx-auto p-4 space-y-4">
             
             {view === 'orders' && (
