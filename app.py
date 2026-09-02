@@ -7,14 +7,16 @@ import json
 import os
 import random
 import shutil
+import copy
 from datetime import datetime, timezone
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
-import shutil
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TMP_DATA_DIR = "/tmp/data" if (os.environ.get('VERCEL') or os.name != 'nt') else os.path.join(BASE_DIR, 'data')
+
+MEMORY_CACHE = {}
 
 def init_data_dir():
     try:
@@ -24,7 +26,9 @@ def init_data_dir():
                 for fname in os.listdir(DATA_DIR):
                     src = os.path.join(DATA_DIR, fname)
                     dst = os.path.join(TMP_DATA_DIR, fname)
-                    if os.path.isfile(src):
+                    # CRITICAL: Only copy if file does NOT exist in destination!
+                    # Do NOT overwrite saved orders with initial git state!
+                    if os.path.isfile(src) and not os.path.exists(dst):
                         shutil.copy(src, dst)
     except Exception as e:
         print(f"init_data_dir error: {e}")
@@ -61,18 +65,24 @@ def log_event(event_type, message, badge="INFO"):
     return event
 
 def load_json_file(filename):
+    if filename in MEMORY_CACHE and MEMORY_CACHE[filename]:
+        return copy.deepcopy(MEMORY_CACHE[filename])
     bases = [DATA_DIR, TMP_DATA_DIR] if TMP_DATA_DIR == DATA_DIR else [TMP_DATA_DIR, DATA_DIR]
     for base in bases:
         file_path = os.path.join(base, filename)
         if os.path.exists(file_path):
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    data = json.load(f)
+                    MEMORY_CACHE[filename] = copy.deepcopy(data)
+                    return data
             except Exception as e:
                 print(f"Error loading {file_path}: {e}")
     return []
 
 def save_json_file(filename, data):
+    import copy
+    MEMORY_CACHE[filename] = copy.deepcopy(data)
     bases = [DATA_DIR, TMP_DATA_DIR] if TMP_DATA_DIR == DATA_DIR else [TMP_DATA_DIR, DATA_DIR]
     for base in bases:
         try:
@@ -310,6 +320,51 @@ def list_orders():
         
     orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
     return jsonify(orders)
+
+@app.route('/api/orders/sync', methods=['POST'])
+def sync_orders():
+    """Bidirectional order sync: reconciles client-side persistent orders with server state."""
+    data = request.get_json() or {}
+    client_orders = data.get('orders', [])
+    server_orders = get_orders()
+    
+    if not client_orders:
+        return jsonify({"success": True, "orders": server_orders})
+    
+    server_map = {o['order_number']: o for o in server_orders if 'order_number' in o}
+    modified = False
+    
+    for co in client_orders:
+        ord_num = co.get('order_number')
+        if not ord_num:
+            continue
+        if ord_num not in server_map:
+            server_orders.insert(0, co)
+            server_map[ord_num] = co
+            modified = True
+        else:
+            existing = server_map[ord_num]
+            # If client order has advanced status or assignment, accept it
+            if co.get('status') and co.get('status') != existing.get('status'):
+                priority_map = {'Pending': 0, 'Assigned': 1, 'In Transit': 2, 'Picked Up': 2, 'Delivered': 3, 'Cancelled': 4}
+                if priority_map.get(co.get('status'), 0) >= priority_map.get(existing.get('status'), 0):
+                    existing['status'] = co['status']
+                    modified = True
+            if co.get('dispatcher_id') and not existing.get('dispatcher_id'):
+                existing['dispatcher_id'] = co['dispatcher_id']
+                existing['dispatcher_name'] = co.get('dispatcher_name', existing.get('dispatcher_name'))
+                existing['driver_phone'] = co.get('driver_phone', existing.get('driver_phone'))
+                existing['vehicle_type'] = co.get('vehicle_type', existing.get('vehicle_type'))
+                existing['vehicle_reg'] = co.get('vehicle_reg', existing.get('vehicle_reg'))
+                modified = True
+            if co.get('delivered_at') and not existing.get('delivered_at'):
+                existing['delivered_at'] = co['delivered_at']
+                modified = True
+    
+    if modified:
+        save_orders(server_orders)
+        
+    return jsonify({"success": True, "orders": server_orders})
 
 @app.route('/api/orders/search', methods=['GET'])
 def search_order():

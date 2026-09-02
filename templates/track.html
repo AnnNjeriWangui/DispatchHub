@@ -31,44 +31,44 @@
   <!-- QRCode.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-slate-950 antialiased flex flex-col justify-between">
+<body class="min-h-screen font-sans antialiased text-slate-800 flex flex-col justify-between" style="background-color: #f8fafc;">
 
-  <!-- Header -->
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+  <!-- Header (Deep Midnight Slate) -->
+  <header class="border-b border-slate-800 bg-[#0f172a] sticky top-0 z-50 shadow-md">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center space-x-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5">
-          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-            <i data-lucide="package" class="w-4 h-4 text-emerald-400"></i>
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 p-0.5 shadow-sm">
+          <div class="w-full h-full bg-[#0f172a] rounded-[10px] flex items-center justify-center">
+            <i data-lucide="package" class="w-4 h-4 text-indigo-400"></i>
           </div>
         </div>
         <div>
-          <span class="font-extrabold text-white text-base tracking-tight">Reflex <span class="text-emerald-400">Track</span></span>
+          <span class="font-extrabold text-white text-base tracking-tight">Reflex <span class="text-indigo-400">Track</span></span>
           <span class="text-[10px] text-slate-400 block -mt-1 font-mono">Public Delivery Tracking</span>
         </div>
       </a>
 
       <!-- Quick Role Switcher -->
       <div class="flex items-center space-x-2 text-xs">
-        <a href="/" class="px-2.5 py-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">🏪 Retailer</a>
-        <a href="/dispatcher" class="px-2.5 py-1 text-emerald-400 hover:text-emerald-300 font-semibold bg-emerald-500/10 border border-emerald-500/20 rounded-lg transition">🎯 Dispatcher Hub</a>
-        <a href="/rider" class="px-2.5 py-1 text-cyan-400 hover:text-cyan-300 rounded-lg hover:bg-slate-800 transition">⚡ Rider</a>
+        <a href="/" class="px-2.5 py-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition">🏪 Retailer</a>
+        <a href="/dispatcher" class="px-2.5 py-1 text-indigo-300 hover:text-white font-semibold bg-indigo-600/20 border border-indigo-500/30 rounded-lg transition">🎯 Dispatcher Hub</a>
+        <a href="/rider" class="px-2.5 py-1 text-blue-300 hover:text-white rounded-lg hover:bg-slate-800 transition">⚡ Rider</a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main Content (Soft Light Gray Canvas) -->
   <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
     
     <!-- Search Banner -->
     <div class="text-center space-y-3">
-      <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full inline-block">
+      <span class="px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full inline-block">
         Real-Time Logistics
       </span>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-        Track Your <span class="text-emerald-400">Delivery</span> in Real Time
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        Track Your <span class="text-indigo-600">Delivery</span> in Real Time
       </h1>
-      <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+      <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
         Enter your order tracking number to view real-time rider location, delivery ETA, and payment receipt.
       </p>
 
@@ -81,81 +81,81 @@
             id="trackInput" 
             placeholder="e.g. ORD-2026-0828-001" 
             required
-            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition shadow-lg"
+            class="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 font-mono placeholder-slate-400 focus:outline-none focus:border-indigo-600 transition shadow-sm"
           >
         </div>
-        <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20 active:scale-95">
+        <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-md active:scale-95">
           Track
         </button>
       </form>
 
       <!-- Quick sample lookups -->
-      <div class="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-xs text-slate-400">
+      <div class="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-xs text-slate-500">
         <span>Try Sample Orders:</span>
-        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0828-001">ORD-2026-0828-001</button>
+        <button class="sample-chip text-indigo-600 hover:underline font-mono font-semibold" data-ord="ORD-2026-0828-001">ORD-2026-0828-001</button>
         <span>•</span>
-        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0828-002">ORD-2026-0828-002</button>
+        <button class="sample-chip text-indigo-600 hover:underline font-mono font-semibold" data-ord="ORD-2026-0828-002">ORD-2026-0828-002</button>
         <span>•</span>
-        <button class="sample-chip text-emerald-400 hover:underline font-mono" data-ord="ORD-2026-0826-004">ORD-2026-0826-004</button>
+        <button class="sample-chip text-indigo-600 hover:underline font-mono font-semibold" data-ord="ORD-2026-0828-003">ORD-2026-0828-003</button>
       </div>
     </div>
 
     <!-- Live Order Card Result -->
     <div id="trackResultContainer" class="hidden space-y-6">
       
-      <!-- Order Header Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+      <!-- Order Header Card (Crisp White) -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div class="flex items-center space-x-2">
-              <h2 class="text-base font-bold text-white font-mono" id="dispOrderNum">ORD-2026-0828-001</h2>
-              <span id="dispStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">In Transit</span>
+              <h2 class="text-base font-bold text-slate-900 font-mono" id="dispOrderNum">ORD-2026-0828-001</h2>
+              <span id="dispStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">In Transit</span>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5" id="dispOrderDate">Logged today at 10:15 AM</p>
+            <p class="text-xs text-slate-500 mt-0.5" id="dispOrderDate">Logged today</p>
           </div>
 
           <div class="text-right">
-            <div class="text-xs text-slate-400">Estimated Delivery:</div>
-            <div class="text-sm font-extrabold text-emerald-400 font-mono" id="dispEta">~18 mins</div>
+            <div class="text-xs text-slate-500">Estimated Delivery:</div>
+            <div class="text-sm font-extrabold text-indigo-600 font-mono" id="dispEta">~18 mins</div>
           </div>
         </div>
 
         <!-- 4-Step Interactive Timeline -->
         <div class="py-4">
           <div class="relative flex items-center justify-between">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-800 z-0"></div>
-            <div id="progLine" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-emerald-500 z-0 transition-all duration-500" style="width: 66%;"></div>
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 z-0"></div>
+            <div id="progLine" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-indigo-600 z-0 transition-all duration-500" style="width: 66%;"></div>
 
             <!-- Step 1: Placed -->
             <div class="relative z-10 text-center flex flex-col items-center">
-              <div id="stepDot1" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40">
+              <div id="stepDot1" class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md">
                 <i data-lucide="check" class="w-4 h-4"></i>
               </div>
-              <span class="text-[11px] font-bold text-slate-200 mt-1.5">Order Placed</span>
+              <span class="text-[11px] font-bold text-slate-800 mt-1.5">Order Placed</span>
             </div>
 
             <!-- Step 2: Assigned -->
             <div class="relative z-10 text-center flex flex-col items-center">
-              <div id="stepDot2" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40">
+              <div id="stepDot2" class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md">
                 <i data-lucide="user-check" class="w-4 h-4"></i>
               </div>
-              <span class="text-[11px] font-bold text-slate-200 mt-1.5">Rider Assigned</span>
+              <span class="text-[11px] font-bold text-slate-800 mt-1.5">Rider Assigned</span>
             </div>
 
             <!-- Step 3: In Transit -->
             <div class="relative z-10 text-center flex flex-col items-center">
-              <div id="stepDot3" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg shadow-emerald-500/40 animate-pulse">
+              <div id="stepDot3" class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md animate-pulse">
                 <i data-lucide="bike" class="w-4 h-4"></i>
               </div>
-              <span class="text-[11px] font-bold text-emerald-400 mt-1.5">In Transit</span>
+              <span class="text-[11px] font-bold text-indigo-600 mt-1.5">In Transit</span>
             </div>
 
             <!-- Step 4: Delivered -->
             <div class="relative z-10 text-center flex flex-col items-center">
-              <div id="stepDot4" class="w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700">
+              <div id="stepDot4" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300">
                 <i data-lucide="package-check" class="w-4 h-4"></i>
               </div>
-              <span class="text-[11px] font-medium text-slate-400 mt-1.5">Delivered</span>
+              <span class="text-[11px] font-medium text-slate-500 mt-1.5">Delivered</span>
             </div>
           </div>
         </div>
@@ -165,27 +165,27 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         
         <!-- Assigned Rider Profile -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-            <i data-lucide="bike" class="w-4 h-4 text-emerald-400"></i>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-sm">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1.5">
+            <i data-lucide="bike" class="w-4 h-4 text-indigo-600"></i>
             <span>Your Delivery Rider</span>
           </span>
 
           <div class="flex items-center space-x-3.5 pt-1">
-            <img src="/static/assets/riders/hesbon_otieno.jpg" id="dispRiderAvatar" alt="Driver" class="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-md flex-shrink-0" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
+            <img src="/static/assets/riders/hesbon_otieno.jpg" id="dispRiderAvatar" alt="Driver" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 shadow-sm flex-shrink-0" onerror="this.src='/static/assets/riders/hesbon_otieno.jpg'">
             <div>
-              <h3 class="font-bold text-white text-sm" id="dispRiderName">Hesbon Otieno</h3>
-              <p class="text-xs text-slate-300" id="dispVehicle">Electric Roam Motorbike • KME 102G</p>
-              <div class="text-[11px] text-amber-400 font-semibold mt-0.5">⭐ 4.9 Rating (412 Deliveries)</div>
+              <h3 class="font-bold text-slate-900 text-sm" id="dispRiderName">Hesbon Otieno</h3>
+              <p class="text-xs text-slate-500" id="dispVehicle">Electric Roam Motorbike • KME 102G</p>
+              <div class="text-[11px] text-amber-600 font-semibold mt-0.5">⭐ 4.9 Rating (412 Deliveries)</div>
             </div>
           </div>
 
           <div class="pt-2 flex items-center space-x-2">
-            <a id="btnCallDriver" href="tel:+254712345678" class="flex-1 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 font-bold text-xs rounded-xl border border-emerald-500/30 flex items-center justify-center space-x-1.5 transition">
+            <a id="btnCallDriver" href="tel:+254712345678" class="flex-1 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 flex items-center justify-center space-x-1.5 transition">
               <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
               <span>Call Rider</span>
             </a>
-            <a id="btnSmsDriver" href="sms:+254712345678" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 flex items-center justify-center space-x-1.5 transition">
+            <a id="btnSmsDriver" href="sms:+254712345678" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 flex items-center justify-center space-x-1.5 transition">
               <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
               <span>Send SMS</span>
             </a>
@@ -193,150 +193,164 @@
         </div>
 
         <!-- Handover PIN & QR Confirmation -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 flex flex-col justify-between shadow-sm">
           <div>
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-              <i data-lucide="shield-check" class="w-4 h-4 text-purple-400"></i>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
               <span>Customer Verification Code</span>
             </span>
-            <p class="text-xs text-slate-400 mt-1">Provide this 4-digit code or show the QR code to your rider upon delivery.</p>
+            <p class="text-xs text-slate-500 mt-1">Provide this 4-digit code or show the QR code to your rider upon delivery.</p>
           </div>
 
-          <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
             <div>
               <span class="text-[10px] text-slate-500 uppercase font-mono">Handover PIN</span>
-              <div class="text-2xl font-extrabold text-emerald-400 font-mono tracking-widest" id="dispHandoffPin">4819</div>
+              <div class="text-2xl font-extrabold text-indigo-600 font-mono tracking-widest" id="dispHandoffPin">4819</div>
             </div>
-            <div id="dispCustomerQr" class="bg-white p-1 rounded-lg"></div>
+            <div id="dispCustomerQr" class="bg-white p-1 rounded-lg border border-slate-200"></div>
           </div>
         </div>
 
       </div>
 
       <!-- Receipt & Package Details -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-          <i data-lucide="receipt" class="w-4 h-4 text-blue-400"></i>
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1.5">
+          <i data-lucide="receipt" class="w-4 h-4 text-indigo-600"></i>
           <span>Package & Payment Breakdown</span>
         </span>
 
-        <div class="divide-y divide-slate-800 text-xs">
-          <div class="py-2.5 flex justify-between">
-            <span class="text-slate-400">Recipient Name:</span>
-            <strong class="text-white" id="dispCustName">—</strong>
+        <div class="space-y-2 text-xs divide-y divide-slate-100">
+          <div class="flex justify-between pt-1">
+            <span class="text-slate-500">Customer Name</span>
+            <span class="font-bold text-slate-800" id="dispCustName">—</span>
           </div>
-          <div class="py-2.5 flex justify-between">
-            <span class="text-slate-400">Delivery Address:</span>
-            <strong class="text-white text-right max-w-xs" id="dispCustAddress">Apartment 4B, Kilimani, Nairobi</strong>
+          <div class="flex justify-between pt-2">
+            <span class="text-slate-500">Delivery Address</span>
+            <span class="font-medium text-slate-800 max-w-xs text-right" id="dispCustAddress">—</span>
           </div>
-          <div class="py-2.5 flex justify-between">
-            <span class="text-slate-400">Item Description:</span>
-            <strong class="text-slate-200" id="dispItemDesc">Luxury white rose bouquet with glass vase</strong>
+          <div class="flex justify-between pt-2">
+            <span class="text-slate-500">Item Description</span>
+            <span class="font-semibold text-slate-800" id="dispItemDesc">—</span>
           </div>
-          <div class="py-2.5 flex justify-between">
-            <span class="text-slate-400">Item Value:</span>
-            <span class="font-mono text-slate-200" id="dispItemVal">KES 2,500</span>
+          <div class="flex justify-between pt-2">
+            <span class="text-slate-500">Item Value</span>
+            <span class="font-mono text-slate-800" id="dispItemVal">KES 0</span>
           </div>
-          <div class="py-2.5 flex justify-between">
-            <span class="text-slate-400">Delivery Fee (Express):</span>
-            <span class="font-mono text-slate-200" id="dispDeliveryFee">KES 300</span>
+          <div class="flex justify-between pt-2">
+            <span class="text-slate-500">Delivery Fee</span>
+            <span class="font-mono text-slate-800" id="dispDeliveryFee">KES 0</span>
           </div>
-          <div class="py-3 flex justify-between items-center text-sm font-bold bg-slate-950/80 -mx-5 px-5 mt-2 rounded-b-xl border-t border-slate-800">
-            <span class="text-white">Cash on Delivery Total:</span>
-            <span class="text-emerald-400 font-mono text-base font-extrabold" id="dispTotalCod">KES 2,800</span>
+          <div class="flex justify-between pt-2 text-sm font-bold border-t border-slate-200">
+            <span class="text-slate-900">Total COD to Pay</span>
+            <span class="font-mono text-amber-800" id="dispTotalCod">KES 0</span>
           </div>
-        </div>
-
-        <div class="flex items-center justify-between pt-2">
-          <button onclick="alert('Support request logged. A customer agent will call you within 5 minutes.');" class="text-xs text-rose-400 hover:underline">
-            <i data-lucide="help-circle" class="w-3.5 h-3.5 inline mr-1"></i> Report Issue / Return Request
-          </button>
-          <button onclick="window.print()" class="text-xs text-slate-400 hover:text-slate-200 transition">
-            <i data-lucide="printer" class="w-3.5 h-3.5 inline mr-1"></i> Print Receipt
-          </button>
         </div>
       </div>
 
     </div>
 
-    <!-- Error / Not Found Message -->
-    <div id="trackNotFound" class="hidden bg-slate-900/60 border border-slate-800 rounded-2xl p-8 text-center space-y-3">
-      <div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
-        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+    <!-- Error State -->
+    <div id="trackNotFound" class="hidden bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-3 shadow-sm">
+      <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
+        ⚠️
       </div>
-      <h3 class="text-sm font-bold text-white">Order Not Found</h3>
-      <p class="text-xs text-slate-400 max-w-sm mx-auto">Please check your tracking number format (e.g. ORD-2026-0828-001) or contact your retailer for assistance.</p>
+      <h3 class="text-base font-bold text-slate-900">Order Not Found</h3>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto">
+        We couldn't locate that order number. Please double check the order code from your merchant receipt or try one of the samples above.
+      </p>
     </div>
 
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+  <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
     <div class="max-w-4xl mx-auto px-4">
-      Reflex Logistics OS • Fast, Trusted Kenyan Last-Mile Delivery Network • Westlands, Kilimani, CBD
+      <p>© 2026 Reflex Express Last-Mile Logistics. Electric Motorbike Fleet Operations in Nairobi, Kenya.</p>
     </div>
   </footer>
 
-  <!-- Track Script -->
+  <!-- Script logic -->
   <script>
-    async function loadOrder(orderNum) {
-      if (!orderNum) return;
+    async function loadOrder(orderNumber) {
+      let order = null;
       try {
-        const res = await fetch(`/api/orders/search?order_number=${encodeURIComponent(orderNum)}`);
-        const data = await res.json();
-        
-        if (res.ok && data.found) {
-          renderOrder(data.order);
-        } else {
-          document.getElementById('trackResultContainer').classList.add('hidden');
-          document.getElementById('trackNotFound').classList.remove('hidden');
+        const res = await fetch(`/api/orders/search?order_number=${encodeURIComponent(orderNumber)}`);
+        if (res.ok) {
+          const data = await res.json();
+          order = data.order || data;
         }
-      } catch (e) {
+      } catch (err) {}
+
+      // If server doesn't have it yet, check persistent localStorage
+      if (!order) {
+        try {
+          const raw = localStorage.getItem('dispatchhub_master_orders');
+          if (raw) {
+            const list = JSON.parse(raw);
+            order = list.find(o => o.order_number && o.order_number.toLowerCase() === orderNumber.toLowerCase());
+          }
+        } catch (e) {}
+      }
+
+      if (order) {
+        renderOrderDetails(order);
+        document.getElementById('trackResultContainer').classList.remove('hidden');
+        document.getElementById('trackNotFound').classList.add('hidden');
+        if (window.lucide) lucide.createIcons();
+      } else {
         document.getElementById('trackResultContainer').classList.add('hidden');
         document.getElementById('trackNotFound').classList.remove('hidden');
       }
-      if (window.lucide) lucide.createIcons();
     }
 
-    function renderOrder(order) {
-      document.getElementById('trackNotFound').classList.add('hidden');
-      document.getElementById('trackResultContainer').classList.remove('hidden');
-      
+    function renderOrderDetails(order) {
       document.getElementById('dispOrderNum').textContent = order.order_number;
-      document.getElementById('dispStatusBadge').textContent = order.status;
-      document.getElementById('dispOrderDate').textContent = `Logged: ${new Date(order.created_at || Date.now()).toLocaleTimeString('en-GB')}`;
-      document.getElementById('dispEta').textContent = order.status === 'Delivered' ? 'Completed' : `~${order.eta_minutes || 20} mins`;
       
-      // Update Progress Bar
+      const badge = document.getElementById('dispStatusBadge');
+      badge.textContent = order.status;
+      if (order.status === 'Pending') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300';
+      } else if (order.status === 'In Transit' || order.status === 'Assigned') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300';
+      } else if (order.status === 'Delivered') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+      }
+
+      const dateStr = order.created_at ? new Date(order.created_at).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) : '10:15 AM';
+      document.getElementById('dispOrderDate').textContent = `Logged at ${dateStr}`;
+      document.getElementById('dispEta').textContent = order.status === 'Delivered' ? 'Delivered' : `~${order.eta_minutes || 18} mins`;
+
+      // Timeline logic
       const progLine = document.getElementById('progLine');
       const s1 = document.getElementById('stepDot1');
       const s2 = document.getElementById('stepDot2');
       const s3 = document.getElementById('stepDot3');
       const s4 = document.getElementById('stepDot4');
-      
+
       if (order.status === 'Pending') {
-        progLine.style.width = '10%';
-        s2.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
-        s3.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
-        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
-      } else if (order.status === 'Assigned') {
+        progLine.style.width = '0%';
+        s2.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
+        s3.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
+      } else if (order.status === 'Assigned' || (order.dispatcher_id && order.status !== 'In Transit' && order.status !== 'Delivered')) {
         progLine.style.width = '33%';
-        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
-        s3.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
-        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+        s2.className = 'w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md';
+        s3.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
       } else if (order.status === 'In Transit' || order.status === 'Picked Up') {
         progLine.style.width = '66%';
-        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
-        s3.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg animate-pulse';
-        s4.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+        s2.className = 'w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md';
+        s3.className = 'w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md animate-pulse';
+        s4.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-300';
       } else if (order.status === 'Delivered') {
         progLine.style.width = '100%';
-        s2.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
-        s3.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
-        s4.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg';
+        s2.className = 'w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md';
+        s3.className = 'w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md';
+        s4.className = 'w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-md';
       }
-      
-      // Rider
+
+      // Rider avatar mapping
       const driverMap = {
         'RIDER-001': '/static/assets/riders/hesbon_otieno.jpg',
         'RIDER-002': '/static/assets/riders/faith_wambui.jpg',
@@ -397,7 +411,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       
-      // Check query params
       const params = new URLSearchParams(window.location.search);
       const initialOrd = params.get('ord') || params.get('order');
       if (initialOrd) {

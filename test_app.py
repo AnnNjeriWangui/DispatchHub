@@ -161,5 +161,22 @@ class TestDispatchHub(unittest.TestCase):
         self.assertIn('retailer_commission_kes', data)
         self.assertIn('platform_revenue_kes', data)
 
+    def test_order_sync(self):
+        sample_order = {
+            "order_number": "ORD-TEST-PERM-001",
+            "retailer_id": "RET-001",
+            "customer_name": "Test Permanent Customer",
+            "customer_phone": "+254 712 999 888",
+            "delivery_address": "Test Avenue, Nairobi",
+            "item_description": "Perishable item test",
+            "status": "Pending",
+            "created_at": "2026-09-02T22:00:00.000Z"
+        }
+        rv = self.client.post('/api/orders/sync', json={"orders": [sample_order]})
+        self.assertEqual(rv.status_code, 200)
+        orders = rv.get_json()['orders']
+        found = any(o.get('order_number') == 'ORD-TEST-PERM-001' for o in orders)
+        self.assertTrue(found)
+
 if __name__ == '__main__':
     unittest.main()
