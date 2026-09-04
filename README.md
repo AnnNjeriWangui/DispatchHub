@@ -62,22 +62,42 @@ This project is built and maintained collaboratively by:
 
 ## 👥 Kenyan Customer Profiles Dataset (`data/customers.json`)
 
+Organized with 5 dedicated Kenyan customers per retailer:
+
+### 🌸 Savanna Blooms & Florist (`RET-001` - Westlands)
 1. **Wanjiku Kimani** — `+254 711 234 567` (Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi)
 2. **Juma Mwangi** — `+254 723 456 789` (Diamond Plaza Annex, 4th Parklands Avenue, Parklands, Nairobi)
 3. **Faith Chebet** — `+254 734 567 890` (Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi)
-4. **Kevin Otieno** — `+254 745 678 901` (7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi)
-5. **Mercy Achieng** — `+254 756 789 012` (House No. 45, Golden Gate Estate, South B, Nairobi)
-6. **Dennis Mutiso** — `+254 767 890 123` (Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi)
-7. **Amara Njoroge** — `+254 778 001 234` (Flat 7A, Lavington Green Apartments, James Gichuru Road, Lavington, Nairobi)
-8. **Silas Kiprop** — `+254 789 112 345` (House 22, Milimani Estate, Kisumu-Nairobi Highway, Kisumu)
-9. **Zara Abdi** — `+254 790 223 456` (Apt 3C, Tudor Court, Nyali Road, Nyali, Mombasa)
-10. **Linet Wanjiru** — `+254 701 334 567` (Plot 18, Runda Mimosa, Runda Estate, Nairobi)
-11. **Omar Sheikh** — `+254 712 445 678` (Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD)
-12. **Brian Kiprono** — `+254 724 556 789` (House 9B, Karen Plains, Marist Road, Karen, Nairobi)
-13. **Halima Mohammed** — `+254 735 667 890` (Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi)
-14. **Victor Omondi** — `+254 746 778 901` (House 88, Greatwall Gardens Phase 2, Shanghai Rd, Athi River)
-15. **Esther Nekesa** — `+254 757 889 012` (Suite 14, Section 58 Heights, Oginga Odinga Way, Nakuru)
-16. **Collins Cheruiyot** — `+254 768 990 123` (Villa 5, Elgon View Estate, Nandi Road, Eldoret)
+4. **Amara Njoroge** — `+254 778 001 234` (Flat 7A, Lavington Green Apartments, James Gichuru Road, Lavington, Nairobi)
+5. **Linet Wanjiru** — `+254 701 334 567` (Plot 18, Runda Mimosa, Runda Estate, Nairobi)
+
+### 🏺 Rift Valley Artisan Crafts (`RET-002` - Karen)
+6. **Silas Kiprop** — `+254 789 112 345` (House 9B, Karen Plains, Marist Road, Karen, Nairobi)
+7. **Brian Kiprono** — `+254 724 556 789` (Cottage 4, Hardy Manor, Bogani East Road, Karen, Nairobi)
+8. **Collins Cheruiyot** — `+254 768 990 123` (Villa 5, Langata Ridge Estate, Mokoyeti West Rd, Langata, Nairobi)
+9. **Sharon Chepchumba** — `+254 715 882 101` (House 27, Windy Ridge, Dagoretti Road, Karen, Nairobi)
+10. **Wesley Kiprotich** — `+254 729 443 652` (Apt 14, Galleria View Suites, Langata South Road, Karen, Nairobi)
+
+### ⚡ Nairobi Tech & Gadgets Hub (`RET-003` - Moi Avenue CBD)
+11. **Kevin Otieno** — `+254 745 678 901` (7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi)
+12. **Omar Sheikh** — `+254 712 445 678` (Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD)
+13. **Victor Omondi** — `+254 746 778 901` (Office 12B, Mirage Towers, Chiromo Road, Westlands, Nairobi)
+14. **Kennedy Odhiambo** — `+254 731 229 883` (Floor 10, ICEA Lion Centre, Riverside Park, Chiromo, Nairobi)
+15. **Maureen Anyango** — `+254 748 651 902` (Block B-402, Kilimani Palms, Wood Avenue, Kilimani, Nairobi)
+
+### 🥑 Organic Fresh Basket (`RET-004` - Lavington)
+16. **Mercy Achieng** — `+254 756 789 012` (House No. 45, Golden Gate Estate, South B, Nairobi)
+17. **Zara Abdi** — `+254 790 223 456` (Penthouse 8, Riverside Pearl, Riverside Drive, Nairobi)
+18. **Halima Mohammed** — `+254 735 667 890` (Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi)
+19. **Joy Mutua** — `+254 733 987 654` (Greenwood Court, Marcus Garvey Rd, Kilimani, Nairobi)
+20. **Beatrice Ndunge** — `+254 718 349 012` (Villa 8, Lavington Hill, James Gichuru Road, Lavington, Nairobi)
+
+### 📚 Urban Books & Stationery (`RET-005` - Ruaka Kiambu)
+21. **Dennis Mutiso** — `+254 767 890 123` (Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi)
+22. **Esther Nekesa** — `+254 757 889 012` (House 33, Rosslyn Green Valley, Limuru Road, Nairobi)
+23. **David Macharia** — `+254 721 903 445` (Apt 5B, Two Rivers Riverbank, Limuru Road, Ruaka, Kiambu)
+24. **Grace Nyambura** — `+254 705 612 874` (Villa 19, Joyland Estate, Ruaka-Banana Road, Ruaka, Kiambu)
+25. **Peter Kariuki** — `+254 711 554 433` (House 12, Mvuli Road, Lavington, Nairobi)
 
 ---
 

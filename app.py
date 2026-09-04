@@ -227,7 +227,13 @@ def list_retailers():
 
 @app.route('/api/customers', methods=['GET'])
 def list_customers():
-    return jsonify(get_customers())
+    retailer_id = request.args.get('retailer_id')
+    customers = get_customers()
+    if retailer_id and retailer_id != 'ALL':
+        filtered = [c for c in customers if c.get('retailer_id') == retailer_id]
+        if filtered:
+            return jsonify(filtered)
+    return jsonify(customers)
 
 @app.route('/api/users', methods=['GET'])
 def list_users():

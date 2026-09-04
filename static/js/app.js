@@ -248,6 +248,7 @@ function switchRetailer(retailerId) {
     }
   }
 
+  renderCustomerPresetChips();
   renderCatalogPresetChips();
   fetchOrdersAndMetrics();
   if (window.lucide) lucide.createIcons();
@@ -257,19 +258,40 @@ function switchRetailer(retailerId) {
 // Customers & Catalog Presets
 // ==========================================
 function renderCustomerPresetChips() {
+  if (!elements.customerChipsGrid) return;
   elements.customerChipsGrid.innerHTML = '';
-  state.customers.forEach(c => {
+
+  let relevantCustomers = state.customers;
+  if (state.currentRetailerId && state.currentRetailerId !== 'ALL') {
+    const retailerSpecific = state.customers.filter(c => c.retailer_id === state.currentRetailerId);
+    if (retailerSpecific.length > 0) {
+      relevantCustomers = retailerSpecific;
+    }
+  }
+
+  const presetLabel = document.getElementById('customerPresetLabel');
+  if (presetLabel) {
+    const activeRetailer = state.retailers.find(r => r.id === state.currentRetailerId);
+    const storeShortName = activeRetailer ? activeRetailer.name.split(' ')[0] : 'Kenyan';
+    presetLabel.innerHTML = `<i data-lucide="users"></i> Quick Fill: ${storeShortName} Customers (${relevantCustomers.length} Registered)`;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  relevantCustomers.forEach(c => {
     const chip = document.createElement('div');
     chip.className = 'customer-chip';
     chip.innerHTML = `
       <strong>${c.name}</strong>
-      <span>${c.neighborhood} • ${c.phone}</span>
+      <span>${c.neighborhood || c.city || 'Nairobi'} • ${c.phone}</span>
     `;
     chip.addEventListener('click', () => {
       elements.inputCustomerName.value = c.name;
       elements.inputCustomerPhone.value = c.phone;
       elements.inputDeliveryAddress.value = c.delivery_address;
-      showToast(`Selected Kenyan customer: ${c.name}`, 'info');
+      if (c.notes && elements.inputSpecialInstructions && !elements.inputSpecialInstructions.value) {
+        elements.inputSpecialInstructions.value = c.notes;
+      }
+      showToast(`Selected Kenyan customer: ${c.name} (${c.neighborhood || 'Nairobi'})`, 'info');
     });
     elements.customerChipsGrid.appendChild(chip);
   });

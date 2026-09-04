@@ -64,6 +64,28 @@ class TestDispatchHub(unittest.TestCase):
         # Check no duplicates in customer names
         self.assertEqual(len(names), len(set(names)), "Customer names must be unique without duplicates")
 
+    def test_retailer_dedicated_customers(self):
+        retailers = ['RET-001', 'RET-002', 'RET-003', 'RET-004', 'RET-005']
+        for ret_id in retailers:
+            rv = self.client.get(f'/api/customers?retailer_id={ret_id}')
+            self.assertEqual(rv.status_code, 200)
+            customers = rv.get_json()
+            self.assertGreaterEqual(len(customers), 4, f"{ret_id} should have at least 4 dedicated customers")
+            for c in customers:
+                self.assertEqual(c.get('retailer_id'), ret_id)
+                self.assertTrue(c.get('phone', '').startswith('+254'))
+
+    def test_retailer_orders_have_pending_transit_delivered(self):
+        retailers = ['RET-001', 'RET-002', 'RET-003', 'RET-004', 'RET-005']
+        for ret_id in retailers:
+            rv = self.client.get(f'/api/orders?retailer_id={ret_id}')
+            self.assertEqual(rv.status_code, 200)
+            orders = rv.get_json()
+            statuses = {o.get('status') for o in orders}
+            self.assertIn('Pending', statuses, f"{ret_id} must have Pending orders")
+            self.assertIn('In Transit', statuses, f"{ret_id} must have In Transit orders")
+            self.assertIn('Delivered', statuses, f"{ret_id} must have Delivered orders")
+
     def test_no_duplicate_orders(self):
         rv = self.client.get('/api/orders')
         self.assertEqual(rv.status_code, 200)

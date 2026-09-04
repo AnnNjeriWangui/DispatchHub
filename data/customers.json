@@ -1,146 +1,302 @@
 [
   {
     "id": "CUST-001",
+    "retailer_id": "RET-001",
     "name": "Wanjiku Kimani",
     "phone": "+254 711 234 567",
     "email": "wanjiku.kimani@example.co.ke",
     "delivery_address": "Apartment 4B, Silver Oak Heights, Argwings Kodhek Rd, Kilimani, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Kilimani"
+    "neighborhood": "Kilimani",
+    "preferred_payment": "M-Pesa (Till)",
+    "notes": "Fragile glass vase flowers, leave with front concierge"
   },
   {
     "id": "CUST-002",
+    "retailer_id": "RET-001",
     "name": "Juma Mwangi",
     "phone": "+254 723 456 789",
     "email": "juma.mwangi@example.co.ke",
     "delivery_address": "Suite 302, Diamond Plaza Annex, 4th Parklands Avenue, Parklands, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Parklands"
+    "neighborhood": "Parklands",
+    "preferred_payment": "Cash on Delivery",
+    "notes": "Anniversary surprise bouquet, deliver before 5 PM"
   },
   {
     "id": "CUST-003",
+    "retailer_id": "RET-001",
     "name": "Faith Chebet",
     "phone": "+254 734 567 890",
     "email": "faith.chebet@example.co.ke",
     "delivery_address": "Villa 12, Acacia Court, Mandera Road, Kileleshwa, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Kileleshwa"
-  },
-  {
-    "id": "CUST-004",
-    "name": "Kevin Otieno",
-    "phone": "+254 745 678 901",
-    "email": "kevin.otieno@example.co.ke",
-    "delivery_address": "7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi",
-    "city": "Nairobi",
-    "neighborhood": "Upper Hill"
-  },
-  {
-    "id": "CUST-005",
-    "name": "Mercy Achieng",
-    "phone": "+254 756 789 012",
-    "email": "mercy.achieng@example.co.ke",
-    "delivery_address": "House No. 45, Golden Gate Estate, South B, Nairobi",
-    "city": "Nairobi",
-    "neighborhood": "South B"
-  },
-  {
-    "id": "CUST-006",
-    "name": "Dennis Mutiso",
-    "phone": "+254 767 890 123",
-    "email": "dennis.mutiso@example.co.ke",
-    "delivery_address": "Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi",
-    "city": "Nairobi",
-    "neighborhood": "Garden City / Roysambu"
+    "neighborhood": "Kileleshwa",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "Keep upright and away from direct sunlight"
   },
   {
     "id": "CUST-007",
+    "retailer_id": "RET-001",
     "name": "Amara Njoroge",
     "phone": "+254 778 001 234",
     "email": "amara.njoroge@example.co.ke",
     "delivery_address": "Flat 7A, Lavington Green Apartments, James Gichuru Road, Lavington, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Lavington"
-  },
-  {
-    "id": "CUST-008",
-    "name": "Silas Kiprop",
-    "phone": "+254 789 112 345",
-    "email": "silas.kiprop@example.co.ke",
-    "delivery_address": "House 22, Milimani Estate, Kisumu-Nairobi Highway, Kisumu",
-    "city": "Kisumu",
-    "neighborhood": "Milimani"
-  },
-  {
-    "id": "CUST-009",
-    "name": "Zara Abdi",
-    "phone": "+254 790 223 456",
-    "email": "zara.abdi@example.co.ke",
-    "delivery_address": "Apt 3C, Tudor Court, Nyali Road, Nyali, Mombasa",
-    "city": "Mombasa",
-    "neighborhood": "Nyali"
+    "neighborhood": "Lavington",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Fragile vase, call upon arrival at gate"
   },
   {
     "id": "CUST-010",
+    "retailer_id": "RET-001",
     "name": "Linet Wanjiru",
     "phone": "+254 701 334 567",
     "email": "linet.wanjiru@example.co.ke",
     "delivery_address": "Plot 18, Runda Mimosa, Runda Estate, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Runda"
+    "neighborhood": "Runda",
+    "preferred_payment": "Card on Delivery",
+    "notes": "Handle with care, leave at front porch if gate locked"
+  },
+  {
+    "id": "CUST-008",
+    "retailer_id": "RET-002",
+    "name": "Silas Kiprop",
+    "phone": "+254 789 112 345",
+    "email": "silas.kiprop@example.co.ke",
+    "delivery_address": "House 9B, Karen Plains, Marist Road, Karen, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Karen",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Handcrafted items; handle with care"
+  },
+  {
+    "id": "CUST-012",
+    "retailer_id": "RET-002",
+    "name": "Brian Kiprono",
+    "phone": "+254 724 556 789",
+    "email": "brian.kiprono@example.co.ke",
+    "delivery_address": "Cottage 4, Hardy Manor, Bogani East Road, Karen, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Karen",
+    "preferred_payment": "Cash on Delivery",
+    "notes": "Genuine leather weekend bag; keep moisture-free"
+  },
+  {
+    "id": "CUST-016",
+    "retailer_id": "RET-002",
+    "name": "Collins Cheruiyot",
+    "phone": "+254 768 990 123",
+    "email": "collins.cheruiyot@example.co.ke",
+    "delivery_address": "Villa 5, Langata Ridge Estate, Mokoyeti West Rd, Langata, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Langata",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "Authentic brass and bead jewelry; sign on delivery"
+  },
+  {
+    "id": "CUST-017",
+    "retailer_id": "RET-002",
+    "name": "Sharon Chepchumba",
+    "phone": "+254 715 882 101",
+    "email": "sharon.chepchumba@example.co.ke",
+    "delivery_address": "House 27, Windy Ridge, Dagoretti Road, Karen, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Karen",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Olive wood carving set; ring doorbell at main gate"
+  },
+  {
+    "id": "CUST-018",
+    "retailer_id": "RET-002",
+    "name": "Wesley Kiprotich",
+    "phone": "+254 729 443 652",
+    "email": "wesley.kiprotich@example.co.ke",
+    "delivery_address": "Apt 14, Galleria View Suites, Langata South Road, Karen, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Karen",
+    "preferred_payment": "M-Pesa (Till)",
+    "notes": "Custom beaded leather sandals (Size 42)"
+  },
+  {
+    "id": "CUST-004",
+    "retailer_id": "RET-003",
+    "name": "Kevin Otieno",
+    "phone": "+254 745 678 901",
+    "email": "kevin.otieno@example.co.ke",
+    "delivery_address": "7th Floor, Britam Tower, Hospital Road, Upper Hill, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Upper Hill",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "High-value electronics; call recipient upon arrival at reception"
   },
   {
     "id": "CUST-011",
+    "retailer_id": "RET-003",
     "name": "Omar Sheikh",
     "phone": "+254 712 445 678",
     "email": "omar.sheikh@example.co.ke",
     "delivery_address": "Floor 4, Jubilee Insurance House, Wabera Street, Nairobi CBD",
     "city": "Nairobi",
-    "neighborhood": "Nairobi CBD"
+    "neighborhood": "Nairobi CBD",
+    "preferred_payment": "Cash on Delivery",
+    "notes": "Deliver to reception desk 4th floor; check security seal"
   },
   {
-    "id": "CUST-012",
-    "name": "Brian Kiprono",
-    "phone": "+254 724 556 789",
-    "email": "brian.kiprono@example.co.ke",
-    "delivery_address": "House 9B, Karen Plains, Marist Road, Karen, Nairobi",
+    "id": "CUST-014",
+    "retailer_id": "RET-003",
+    "name": "Victor Omondi",
+    "phone": "+254 746 778 901",
+    "email": "victor.omondi@example.co.ke",
+    "delivery_address": "Office 12B, Mirage Towers, Chiromo Road, Westlands, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "Karen"
+    "neighborhood": "Westlands",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "4K streaming media dongle, verify receipt code"
+  },
+  {
+    "id": "CUST-019",
+    "retailer_id": "RET-003",
+    "name": "Kennedy Odhiambo",
+    "phone": "+254 731 229 883",
+    "email": "kennedy.odhiambo@example.co.ke",
+    "delivery_address": "Floor 10, ICEA Lion Centre, Riverside Park, Chiromo, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Chiromo",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Mechanical RGB keyboard; fragile key switches"
+  },
+  {
+    "id": "CUST-020",
+    "retailer_id": "RET-003",
+    "name": "Maureen Anyango",
+    "phone": "+254 748 651 902",
+    "email": "maureen.anyango@example.co.ke",
+    "delivery_address": "Block B-402, Kilimani Palms, Wood Avenue, Kilimani, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Kilimani",
+    "preferred_payment": "Card on Delivery",
+    "notes": "Fast-charging 65W power bank; verify barcode"
+  },
+  {
+    "id": "CUST-005",
+    "retailer_id": "RET-004",
+    "name": "Mercy Achieng",
+    "phone": "+254 756 789 012",
+    "email": "mercy.achieng@example.co.ke",
+    "delivery_address": "House No. 45, Golden Gate Estate, South B, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "South B",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "Perishable greens, keep chilled in insulated delivery box"
+  },
+  {
+    "id": "CUST-009",
+    "retailer_id": "RET-004",
+    "name": "Zara Abdi",
+    "phone": "+254 790 223 456",
+    "email": "zara.abdi@example.co.ke",
+    "delivery_address": "Penthouse 8, Riverside Pearl, Riverside Drive, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Riverside",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Fresh organic avocados and cold-pressed macadamia oil"
   },
   {
     "id": "CUST-013",
+    "retailer_id": "RET-004",
     "name": "Halima Mohammed",
     "phone": "+254 735 667 890",
     "email": "halima.mohammed@example.co.ke",
     "delivery_address": "Apt 12, South C Winners Court, Muhoho Avenue, South C, Nairobi",
     "city": "Nairobi",
-    "neighborhood": "South C"
+    "neighborhood": "South C",
+    "preferred_payment": "Cash on Delivery",
+    "notes": "Fresh Highland strawberries & raw honeycomb jar"
   },
   {
-    "id": "CUST-014",
-    "name": "Victor Omondi",
-    "phone": "+254 746 778 901",
-    "email": "victor.omondi@example.co.ke",
-    "delivery_address": "House 88, Greatwall Gardens Phase 2, Shanghai Rd, Athi River",
-    "city": "Athi River",
-    "neighborhood": "Athi River / Mavoko"
+    "id": "CUST-021",
+    "retailer_id": "RET-004",
+    "name": "Joy Mutua",
+    "phone": "+254 733 987 654",
+    "email": "joy.mutua@example.co.ke",
+    "delivery_address": "Greenwood Court, Marcus Garvey Rd, Kilimani, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Kilimani",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Perishable produce; deliver immediately in cooler box"
+  },
+  {
+    "id": "CUST-022",
+    "retailer_id": "RET-004",
+    "name": "Beatrice Ndunge",
+    "phone": "+254 718 349 012",
+    "email": "beatrice.ndunge@example.co.ke",
+    "delivery_address": "Villa 8, Lavington Hill, James Gichuru Road, Lavington, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Lavington",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "5kg passion fruit basket; leave with domestic staff if away"
+  },
+  {
+    "id": "CUST-006",
+    "retailer_id": "RET-005",
+    "name": "Dennis Mutiso",
+    "phone": "+254 767 890 123",
+    "email": "dennis.mutiso@example.co.ke",
+    "delivery_address": "Block C-204, Garden City Residences, Exit 7 Thika Road, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Garden City / Roysambu",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Keep dry; executive leather notebook & pen set"
   },
   {
     "id": "CUST-015",
+    "retailer_id": "RET-005",
     "name": "Esther Nekesa",
     "phone": "+254 757 889 012",
     "email": "esther.nekesa@example.co.ke",
-    "delivery_address": "Suite 14, Section 58 Heights, Oginga Odinga Way, Nakuru",
-    "city": "Nakuru",
-    "neighborhood": "Section 58"
+    "delivery_address": "House 33, Rosslyn Green Valley, Limuru Road, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Rosslyn / Runda",
+    "preferred_payment": "Cash on Delivery",
+    "notes": "Architectural sketching pad; do not bend book covers"
   },
   {
-    "id": "CUST-016",
-    "name": "Collins Cheruiyot",
-    "phone": "+254 768 990 123",
-    "email": "collins.cheruiyot@example.co.ke",
-    "delivery_address": "Villa 5, Elgon View Estate, Nandi Road, Eldoret",
-    "city": "Eldoret",
-    "neighborhood": "Elgon View"
+    "id": "CUST-023",
+    "retailer_id": "RET-005",
+    "name": "David Macharia",
+    "phone": "+254 721 903 445",
+    "email": "david.macharia@example.co.ke",
+    "delivery_address": "Apt 5B, Two Rivers Riverbank, Limuru Road, Ruaka, Kiambu",
+    "city": "Ruaka",
+    "neighborhood": "Ruaka",
+    "preferred_payment": "M-Pesa Express",
+    "notes": "Kenyan contemporary fiction book set; gift wrapped"
+  },
+  {
+    "id": "CUST-024",
+    "retailer_id": "RET-005",
+    "name": "Grace Nyambura",
+    "phone": "+254 705 612 874",
+    "email": "grace.nyambura@example.co.ke",
+    "delivery_address": "Villa 19, Joyland Estate, Ruaka-Banana Road, Ruaka, Kiambu",
+    "city": "Ruaka",
+    "neighborhood": "Ruaka",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "2026 executive planner with magnetic bookmark"
+  },
+  {
+    "id": "CUST-025",
+    "retailer_id": "RET-005",
+    "name": "Peter Kariuki",
+    "phone": "+254 711 554 433",
+    "email": "peter.kariuki@example.co.ke",
+    "delivery_address": "House 12, Mvuli Road, Lavington, Nairobi",
+    "city": "Nairobi",
+    "neighborhood": "Lavington",
+    "preferred_payment": "M-Pesa (COD)",
+    "notes": "Pack securely with moisture barrier"
   }
 ]
