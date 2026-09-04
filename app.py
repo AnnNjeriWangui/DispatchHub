@@ -348,6 +348,9 @@ def sync_orders():
             server_orders.insert(0, co)
             server_map[ord_num] = co
             modified = True
+            ret = next((r for r in get_retailers() if r.get('id') == co.get('retailer_id')), None)
+            ret_name = ret.get('name', co.get('retailer_id', 'Retailer')) if ret else co.get('retailer_id', 'Retailer')
+            log_event("ORDER_CREATED", f"Retailer [{ret_name}] order {ord_num} for {co.get('customer_name', 'Customer')} synced to dispatch queue.", "NEW")
         else:
             existing = server_map[ord_num]
             # If client order has advanced status or assignment, accept it
@@ -459,9 +462,11 @@ def create_order():
     orders.insert(0, new_order)
     save_orders(orders)
     
-    log_event("ORDER_CREATED", f"New delivery request {order_number} logged for {new_order['customer_name']}.", "NEW")
+    ret = next((r for r in get_retailers() if r.get('id') == new_order.get('retailer_id')), None)
+    ret_name = ret.get('name', new_order.get('retailer_id', 'Retailer')) if ret else new_order.get('retailer_id', 'Retailer')
+    log_event("ORDER_CREATED", f"Retailer [{ret_name}] created order {order_number} for {new_order['customer_name']}.", "NEW")
     if assigned_dispatcher:
-        log_event("DISPATCH_ASSIGN", f"Order {order_number} auto-assigned to {assigned_dispatcher['name']}.", "ASSIGNED")
+        log_event("DISPATCH_ASSIGN", f"Order {order_number} ({ret_name}) auto-assigned to rider {assigned_dispatcher['name']}.", "ASSIGNED")
     
     return jsonify({
         "message": "Delivery request created successfully and pushed to dispatch queue",
@@ -770,6 +775,22 @@ def get_dispatch_analytics():
 @app.route('/api/events/live', methods=['GET'])
 def get_live_events():
     return jsonify(LIVE_EVENTS)
+
+@app.route('/api/events/log', methods=['POST'])
+def add_live_event():
+    data = request.get_json() or {}
+    message = data.get('message', 'System event recorded')
+    event_type = data.get('type', 'GENERAL')
+    badge = data.get('badge', 'INFO')
+    event = log_event(event_type, message, badge)
+    return jsonify({"success": True, "event": event}), 201
+
+@app.route('/api/events/clear', methods=['POST'])
+def clear_live_events():
+    global LIVE_EVENTS
+    LIVE_EVENTS = []
+    log_event("SYSTEM", "Live event log cleared by dispatcher command.", "SYSTEM")
+    return jsonify({"success": True, "events": LIVE_EVENTS}), 200
 
 if __name__ == '__main__':
     print("DispatchHub Master Command Engine running on http://127.0.0.1:5000")

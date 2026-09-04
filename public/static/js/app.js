@@ -956,6 +956,27 @@ function setupEventListeners() {
     currentList.unshift(newOrderObj);
     saveLocalOrders(currentList);
 
+    // Record live operation event for the Dispatcher Command Center
+    const activeStore = state.retailers.find(r => r.id === targetRetailer) || { name: 'Retailer Store' };
+    const eventObj = {
+      id: `EVT-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      type: 'ORDER_CREATED',
+      message: `Retailer [${activeStore.name}] created order ${newOrderObj.order_number} for ${newOrderObj.customer_name}.`,
+      timestamp: now.toISOString(),
+      badge: 'NEW'
+    };
+    try {
+      const evts = JSON.parse(localStorage.getItem('dispatchhub_live_events') || '[]');
+      evts.unshift(eventObj);
+      localStorage.setItem('dispatchhub_live_events', JSON.stringify(evts.slice(0, 60)));
+      window.dispatchEvent(new CustomEvent('dispatchhub_event_update', { detail: evts }));
+      fetch('/api/events/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventObj)
+      }).catch(() => {});
+    } catch (e) {}
+
     // 2. Instant UI feedback
     showToast(`Order ${newOrderObj.order_number} created & queued!`, 'success');
     elements.modalCreateOrder.classList.add('hidden');
@@ -1017,6 +1038,21 @@ function setupEventListeners() {
 
       const data = await res.json();
       if (res.ok) {
+        // Record live operation event
+        const editEvt = {
+          id: `EVT-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          type: 'ORDER_EDITED',
+          message: `Order ${orderNum} details updated by retailer.`,
+          timestamp: new Date().toISOString(),
+          badge: 'EDIT'
+        };
+        try {
+          const evts = JSON.parse(localStorage.getItem('dispatchhub_live_events') || '[]');
+          evts.unshift(editEvt);
+          localStorage.setItem('dispatchhub_live_events', JSON.stringify(evts.slice(0, 60)));
+          window.dispatchEvent(new CustomEvent('dispatchhub_event_update', { detail: evts }));
+        } catch (e) {}
+
         showToast(`Order ${orderNum} updated successfully!`, 'success');
         elements.modalEditOrder.classList.add('hidden');
         await fetchOrdersAndMetrics();

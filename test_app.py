@@ -200,5 +200,30 @@ class TestDispatchHub(unittest.TestCase):
         found = any(o.get('order_number') == 'ORD-TEST-PERM-001' for o in orders)
         self.assertTrue(found)
 
+    def test_live_events_log_and_fetch(self):
+        # 1. Fetch current live events
+        rv = self.client.get('/api/events/live')
+        self.assertEqual(rv.status_code, 200)
+        events = rv.get_json()
+        self.assertIsInstance(events, list)
+
+        # 2. Log a new live operational action
+        payload = {
+            "type": "RETAILER_ACTION",
+            "message": "Retailer Savanna Blooms created an urgent express order",
+            "badge": "URGENT"
+        }
+        rv_log = self.client.post('/api/events/log', json=payload)
+        self.assertEqual(rv_log.status_code, 201)
+        created_event = rv_log.get_json()['event']
+        self.assertEqual(created_event['badge'], 'URGENT')
+        self.assertIn("Savanna Blooms", created_event['message'])
+
+        # 3. Verify event is in live feed
+        rv2 = self.client.get('/api/events/live')
+        self.assertEqual(rv2.status_code, 200)
+        latest_events = rv2.get_json()
+        self.assertTrue(any(e.get('id') == created_event['id'] for e in latest_events))
+
 if __name__ == '__main__':
     unittest.main()
